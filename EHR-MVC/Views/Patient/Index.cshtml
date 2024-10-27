@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Patient Information";
+    List<SelectListItem> GenderCodeList = (List<SelectListItem>)ViewBag.GenderCodeList;
+    PatientViewModel PatientViewModel = (PatientViewModel)ViewBag.PatientViewModel;
+}
+
+<div id="patientForm">
+    <div class="modal-header">
+        <h1 class="display-4">Patient Information</h1>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="form-inline col-md-6">
+                <label class="control-label">Last Name</label>
+                <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName">
+            </div>
+            <div class="form-inline col-md-6">
+                <label class="control-label">First Name</label>
+                <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-inline col-md-3">
+                <label class="control-label">ID Number</label>
+                <input type="text" class="form-control" id="IdNo" name="IdNo" value="@PatientViewModel.IdNo">
+            </div>
+            <div class="form-inline col-md-3">
+                <label class="control-label">Date of Birth</label>
+                <input type="text" class="form-control" id="Birthday" name="Birthday" value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")">
+            </div>
+            <div class="form-inline col-md-3">
+                <label class="control-label">Gender</label>
+                @Html.DropDownList("Gender", GenderCodeList, "Please Select Gender", new { @class = "form-control", id = "Gender" })
+            </div>
+            <div class="form-group col-md-3">
+                <label class="control-label">Contact Number</label>
+                <input type="text" class="form-control" id="Telecom" value="@PatientViewModel.Telecom">
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <label class="control-label">Address</label>
+                <textarea class="form-control" rows="3" id="Address" name="Address">@PatientViewModel.Address</textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onClick="Submit()">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Submit() {
+        var formData = {
+            PatientId: @PatientViewModel.PatientId,
+            IdNo: document.getElementById("IdNo").value,
+            Active: true,
+            FamilyName: document.getElementById("FamilyName").value,
+            GivenName: document.getElementById("GivenName").value,
+            Telecom: document.getElementById("Telecom").value,
+            Gender: document.getElementById("Gender").value,
+            Birthday: document.getElementById("Birthday").value,
+            Address: document.getElementById("Address").value
+        };
+
+        // console.log('formData', formData);
+
+        $.ajax({
+            url: '@Url.Content("~/Patient/Save")',
+            method: 'POST',
+            dataType: 'json',
+            data: { PatientViewModel: formData },
+            success: function (result) {
+                if (result > 0) {
+                    alert("Save Successful");
+                } else {
+                    alert(result.Error);
+                }
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+</script>
