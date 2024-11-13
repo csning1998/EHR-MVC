@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.Design;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Reflection.Metadata.Ecma335;
 
@@ -11,7 +11,7 @@ namespace EHR_MVC.Controllers
 {
     public class PatientController : Controller
     {
-        private readonly string ConnStr = "Data Source=CSNING\\SQLEXPRESS;Integrated Security=True;Persist Security Info=False;Pooling=False;";
+        private readonly string ConnStr = "Data Source=CSNING\\SQLEXPRESS;Integrated Security=True;Persist Security Info=False;Pooling=False;Multiple Active Result Sets=False;Connect Timeout=60;Encrypt=True;Trust Server Certificate=True;Command Timeout=0";
 
         public IActionResult Index()
         {
@@ -28,16 +28,17 @@ namespace EHR_MVC.Controllers
             return View();
         }
 
-        public IActionResult Save([FromForm] PatientViewModel patientViewModel)
+        #region SaveItem
+        public async Task<IActionResult> Save([FromForm] PatientViewModel patientViewModel)
         {
             try
             {
                 var patientDBModel = ConvertPatientViewModeltoDBModel(patientViewModel);
-                var dbResult = InsertPatient(patientDBModel);
+                var dbResult = await InsertPatientAsync(patientDBModel);
 
-                if (dbResult.Result > 0)
+                if (dbResult > 0)
                 {
-                    return Ok(dbResult.Result);
+                    return Ok(dbResult);
                 }
 
                 return BadRequest(dbResult);
@@ -52,44 +53,48 @@ namespace EHR_MVC.Controllers
                 });
             }
         }
+        #endregion
 
-        #region SQL
-
-        public Task<long> InsertPatient(PatientDBModel patient)
+        #region Insert
+        public async Task<long> InsertPatientAsync(PatientDBModel patient)
         {
             long insertId = 0;
 
-            SqlConnection connection = new SqlConnection(ConnStr);
-
-            var insertStr = @"INSERT INTO DB1.dbo.Patient
-                      VALUES (@IdNo, @Active, @FamilyName, @GivenName, @Telecom, @Gender, @Birthday, @Address);
-                      SELECT @InsertId = SCOPE_IDENTITY();";
-
-            SqlCommand command = new SqlCommand(insertStr, connection);
-
-            SqlParameter outPutValue = new SqlParameter("@InsertId", SqlDbType.BigInt);
-            outPutValue.Direction = ParameterDirection.Output;
-
-            command.Parameters.Add(outPutValue);
-            command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
-            command.Parameters.Add(new SqlParameter("@Active", patient.Active));
-            command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
-            command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
-            command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
-            command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
-            command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
-            command.Parameters.Add(new SqlParameter("@Address", patient.Address));
-
-            connection.Open();
-            command.ExecuteNonQuery();
-            connection.Close();
-
-            if (outPutValue.Value != DBNull.Value)
+            using (SqlConnection connection = new SqlConnection(ConnStr))
             {
-                insertId = Convert.ToInt64(outPutValue.Value);
+                var insertStr = @"INSERT INTO [EHR-MVC-DB].[dbo].[Patient]
+                          VALUES (@IdNo, @Active, @FamilyName, @GivenName, @Telecom, @Gender, @Birthday, @Address);
+                          SELECT @InsertId = SCOPE_IDENTITY();";
+
+                using (SqlCommand command = new SqlCommand(insertStr, connection))
+                {
+                    SqlParameter outPutValue = new SqlParameter("@InsertId", SqlDbType.BigInt)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+
+                    command.Parameters.Add(outPutValue);
+                    command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
+                    command.Parameters.Add(new SqlParameter("@Active", patient.Active));
+                    command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
+                    command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
+                    command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
+                    command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
+                    command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
+                    command.Parameters.Add(new SqlParameter("@Address", patient.Address));
+
+                    await connection.OpenAsync();
+                    await command.ExecuteNonQueryAsync();
+                    connection.Close();
+
+                    if (outPutValue.Value != DBNull.Value)
+                    {
+                        insertId = Convert.ToInt64(outPutValue.Value);
+                    }
+                }
             }
 
-            return Task.FromResult(insertId);
+            return insertId;
         }
 
         #endregion
