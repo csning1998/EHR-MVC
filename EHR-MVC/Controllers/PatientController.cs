@@ -1,11 +1,8 @@
 using EHR_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.Design;
-using System.Data;
 using Microsoft.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Reflection.Metadata.Ecma335;
+using System.Data;
 
 namespace EHR_MVC.Controllers
 {
@@ -16,10 +13,21 @@ namespace EHR_MVC.Controllers
         public IActionResult Index()
         {
 
-            var patientViewModel = new PatientViewModel();
+            var patientViewModel = new PatientViewModel()
+            {
+                IdNo = string.Empty,
+                FamilyName = string.Empty,
+                GivenName = string.Empty,
+                Telecom = string.Empty,
+                Gender = string.Empty,
+                Address = string.Empty,
+                //Active = true,
+                //Birthday = DateTime.Now
+            };
+
             var genderCodeList = new List<SelectListItem> {
-                new SelectListItem { Text = "Male", Value = "M" },
-                new SelectListItem { Text = "Female", Value = "F" }
+                new() { Text = "Male", Value = "M" },
+                new() { Text = "Female", Value = "F" }
             };
 
             ViewBag.GenderCodeList = genderCodeList;
@@ -33,6 +41,20 @@ namespace EHR_MVC.Controllers
         {
             try
             {
+                // In some situation it returns NULL such that exception occured.
+                if (patientViewModel == null)
+                {
+                    ModelState.AddModelError("", "Invalid data submitted.");
+                    // Return the view with errors
+                    return View("Index", patientViewModel);
+                }
+
+                // Ensure that all inputs are validated using data annotations and model state validation.
+                if (!ModelState.IsValid)
+                {
+                    return View("Index", patientViewModel);
+                }
+
                 var patientDBModel = ConvertPatientViewModeltoDBModel(patientViewModel);
                 var dbResult = await InsertPatientAsync(patientDBModel);
 
@@ -60,47 +82,44 @@ namespace EHR_MVC.Controllers
         {
             long insertId = 0;
 
-            using (SqlConnection connection = new SqlConnection(ConnStr))
+            using (SqlConnection connection = new(ConnStr))
             {
                 var insertStr = @"INSERT INTO [EHR-MVC-DB].[dbo].[Patient]
                           VALUES (@IdNo, @Active, @FamilyName, @GivenName, @Telecom, @Gender, @Birthday, @Address);
                           SELECT @InsertId = SCOPE_IDENTITY();";
 
-                using (SqlCommand command = new SqlCommand(insertStr, connection))
+                using SqlCommand command = new(insertStr, connection);
+                SqlParameter outPutValue = new("@InsertId", SqlDbType.BigInt)
                 {
-                    SqlParameter outPutValue = new SqlParameter("@InsertId", SqlDbType.BigInt)
-                    {
-                        Direction = ParameterDirection.Output
-                    };
+                    Direction = ParameterDirection.Output
+                };
 
-                    command.Parameters.Add(outPutValue);
-                    command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
-                    command.Parameters.Add(new SqlParameter("@Active", patient.Active));
-                    command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
-                    command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
-                    command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
-                    command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
-                    command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
-                    command.Parameters.Add(new SqlParameter("@Address", patient.Address));
+                command.Parameters.Add(outPutValue);
+                command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
+                command.Parameters.Add(new SqlParameter("@Active", patient.Active));
+                command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
+                command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
+                command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
+                command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
+                command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
+                command.Parameters.Add(new SqlParameter("@Address", patient.Address));
 
-                    await connection.OpenAsync();
-                    await command.ExecuteNonQueryAsync();
-                    connection.Close();
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+                connection.Close();
 
-                    if (outPutValue.Value != DBNull.Value)
-                    {
-                        insertId = Convert.ToInt64(outPutValue.Value);
-                    }
+                if (outPutValue.Value != DBNull.Value)
+                {
+                    insertId = Convert.ToInt64(outPutValue.Value);
                 }
             }
 
             return insertId;
         }
-
         #endregion
 
         #region Private
-        private PatientDBModel ConvertPatientViewModeltoDBModel(PatientViewModel viewModel)
+        private static PatientDBModel ConvertPatientViewModeltoDBModel(PatientViewModel viewModel)
         {
             return new PatientDBModel()
             {
@@ -115,8 +134,6 @@ namespace EHR_MVC.Controllers
                 Address = viewModel.Address
             };
         }
-
-
         #endregion
     }
 }

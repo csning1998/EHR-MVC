@@ -2,14 +2,14 @@ namespace EHR_MVC.Models
 {
     public class PatientDBModel
     {
-        public long PatientId { get; set; }
-        public string IdNo { get; set; }
+        public required long PatientId { get; set; }
+        public required string IdNo { get; set; }
         public bool Active { get; set; }
-        public string FamilyName { get; set; }
-        public string GivenName { get; set; }
-        public string Telecom { get; set; }
-        public string Gender { get; set; }
+        public required string FamilyName { get; set; }
+        public required string GivenName { get; set; }
+        public required string Telecom { get; set; }
+        public required string Gender { get; set; }
         public DateTime Birthday { get; set; }
-        public string Address { get; set; }
+        public required string Address { get; set; }
     }
 }

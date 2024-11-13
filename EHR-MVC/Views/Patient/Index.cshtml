@@ -15,18 +15,19 @@
             <option value="">-- Select a Dummy Patient --</option>
             <option value="1">Fake Data 1</option>
             <option value="2">Fake Data 2</option>
-            <option value="3">Fake Invalid Data 3</option>
+            <option value="3">Fake Data 3</option>
+            <option value="4">Fake Data 4 (Debug)</option>
         </select>
     </div>
 
     <div class="modal-body">
         <div class="row">
             <div class="form-inline col-md-6">
-                <label class="control-label">Last Name</label>
+                <label class="control-label">Family (Last) Name</label>
                 <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName" required>
             </div>
             <div class="form-inline col-md-6">
-                <label class="control-label">First Name</label>
+                <label class="control-label">Given (First) Name</label>
                 <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName" required>
             </div>
         </div>
@@ -35,12 +36,15 @@
                 <label class="control-label">ID Number</label>
                 <input type="text" class="form-control" id="IdNo" name="IdNo"
                        value="@PatientViewModel.IdNo"
-                       oninput="validateIdNo()"
+                       oninput="regexValidator('IdNo')"
                        required>
             </div>
             <div class="form-inline col-md-3">
                 <label class="control-label">Date of Birth</label>
-                <input type="date" class="form-control" id="Birthday" name="Birthday" value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")" required>
+                <input type="date" class="form-control" id="Birthday" name="Birthday"
+                       value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")"
+                       oninput="regexValidator('Birthday')"
+                       required>
             </div>
             <div class="form-inline col-md-3">
                 <label class="control-label">Gender</label>
@@ -50,7 +54,7 @@
                 <label class="control-label">Phone Number</label>
                 <input type="text" class="form-control" id="Telecom"
                        value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))"
-                       oninput="validateTelecom()"
+                       oninput="regexValidator('Telecom')"
                        required>
             </div>
         </div>
@@ -70,24 +74,33 @@
 
     const dummyPatients = {
         "1": {
-            FamilyName: "hello",
-            GivenName: "world",
+            FamilyName: "O'Sullivan",
+            GivenName: "Ronnie",
             IdNo: "A123456789",
-            Birthday: "1990-01-01",
+            Birthday: "1975-12-05",
             Gender: "M",
             Telecom: "0912345678",
-            Address: "台北車站, This is the invalid data for test purpose only"
+            Address: "Wordsley, West Midlands, England"
         },
         "2": {
-            FamilyName: "Foo",
-            GivenName: "Bar",
+            FamilyName: "Uncle",
+            GivenName: "Roger",
             IdNo: "AB12345678",
-            Birthday: "1985-05-15",
+            Birthday: "1991-03-15",
             Gender: "F",
             Telecom: "0987654321",
-            Address: "Taipei Main Station, This is the invalid data for test purpose only"
+            Address: "7th Floor Pavilion KL, Pavilion Elite, Bukit Bintang, 55100, Kuala Lumpur, Malaysia 55100"
         },
         "3": {
+            FamilyName: "馬斯克",
+            GivenName: "伊隆",
+            IdNo: "CE12345678",
+            Birthday: "1971-06-28",
+            Gender: "F",
+            Telecom: "0913467985",
+            Address: "美國德克薩斯州布朗斯維爾星港"
+        },
+        "4": {
             FamilyName: "WrongData4Test",
             GivenName: "ModifyToTest",
             IdNo: "A!12345678",
@@ -98,59 +111,65 @@
         }
     };
 
-    function validateTelecom() {
-        const telecom = document.getElementById("Telecom").value;
-        // Format of cellphone num in Taiwan
-        const telecomPattern = /^09\d{8}$/;
+    // this function aims to prevent 2nd SQL injection by sanitizing and encoding.
+    function sanitizeInput(input, allowApostrophe = false) {
+        // Define illegal characters, excluding apostrophe if allowed
+        const illegalChars = allowApostrophe ? /[\";<>:\\|/?*]/g : /['\";<>:\\|/?*]/g;
 
-        if (!telecomPattern.test(telecom)) {
-            console.error(`Invalid Telecom Number: "${telecom}". It must start with '09' and contain exactly 10 digits.`);
-            alert("Invalid Contact Number. The number must start with '09' and contain exactly 10 digits.");
-            document.getElementById("Telecom").classList.add("is-invalid");
-            return false;
-        } else {
-            document.getElementById("Telecom").classList.remove("is-invalid");
-            return true;
+        if (illegalChars.test(input)) {
+            alert("Your input contains illegal character(s).");
+            return input.replace(illegalChars, function (match) {
+                return encodeURIComponent(match);
+            });
         }
+
+        return input;
     }
 
-    function validateIdNo() {
-        const IdNo = document.getElementById("IdNo").value;
-        // Format of ID for Taiwanese citizen in regular expression
-        const IdNoPatternCitizen = /^[A-Z][0-9]{9}$/;
-        // Format of ID for ARC Holder in regular expression
-        const IdNoPatternResident = /^[A-Z]{2}[0-9]{8}$/;
 
-        if (IdNo.length != 10) {
-            console.error('Invalid ID Number format.');
-            alert('Your ID Number must be exactly 10 characters.');
-            document.getElementById("IdNo").classList.add("is-invalid");
-            return false;
+    function regexValidator(fieldId) {
+        const value = document.getElementById(fieldId).value;
+        let pattern;
+        let errorMessage;
+        let isValid = false;
+
+        switch (fieldId) {
+            case 'Telecom':
+                pattern = /^09\d{8}$/;
+                errorMessage = "Invalid Contact Number. The number must start with '09' and contain exactly 10 digits.";
+                if (value.length < 10) {
+                    document.getElementById(fieldId).classList.add("is-invalid");
+                    return false;
+                }
+                isValid = pattern.test(value);
+                break;
+            case 'IdNo':
+                pattern = /^([A-Z][1-2][0-9]{8}|[A-Z]{2}[0-9]{8})$/;
+                errorMessage = "Invalid ID Format. Please check your data.";
+                if (value.length < 10) {
+                    document.getElementById(fieldId).classList.add("is-invalid");
+                    return false;
+                }
+                isValid = pattern.test(value) && value.length === 10;
+                break;
+            case 'Birthday':
+                pattern = /^\d{4}-\d{2}-\d{2}$/;
+                errorMessage = "Invalid Birthday format. Please use YYYY-MM-DD format.";
+                isValid = pattern.test(value);
+                break;
+            default:
+                isValid = true;
+                break;
         }
+        // alert('isValid', isValid);
 
-        if (!IdNoPatternCitizen.test(IdNo) && !IdNoPatternResident.test(IdNo)) {
-            console.error(`Invalid ID Number: "${IdNo}"`);
-            alert("Invalid ID Format. Please check your data.");
-            document.getElementById("IdNo").classList.add("is-invalid");
+        if (!isValid) {
+            console.error(`Invalid ${fieldId} Value: "${value}".`);
+            alert(errorMessage);
+            document.getElementById(fieldId).classList.add("is-invalid");
             return false;
         } else {
-            document.getElementById("IdNo").classList.remove("is-invalid");
-            return true;
-        }
-    }
-
-    function validateBirthday() {
-        const birthday = document.getElementById("Birthday").value;
-        // Regular expression in yyyy-mm-dd
-        const birthdayPattern = /^\d{4}-\d{2}-\d{2}$/;
-
-        if (!birthdayPattern.test(birthday)) {
-            console.error(`Invalid Birthday Format: "${birthday}". Expected format is YYYY-MM-DD.`);
-            alert("Invalid Birthday format. Please use YYYY-MM-DD format.");
-            document.getElementById("Birthday").classList.add("is-invalid");
-            return false;
-        } else {
-            document.getElementById("Birthday").classList.remove("is-invalid");
+            document.getElementById(fieldId).classList.remove("is-invalid");
             return true;
         }
     }
@@ -181,9 +200,9 @@
 
     // Function to submit data using AJAX
     function Submit() {
-        const isTelecomValid = validateTelecom();
-        const isIdNoValid = validateIdNo();
-        const isBirthdayValid = validateBirthday();
+        const isTelecomValid = regexValidator('Telecom');
+        const isIdNoValid = regexValidator('IdNo');
+        const isBirthdayValid = regexValidator('Birthday');
 
         if (!isTelecomValid || !isIdNoValid || !isBirthdayValid) {
             alert("Please correct the highlighted fields before submitting the form.");
@@ -192,14 +211,14 @@
 
         var formData = {
             PatientId: @PatientViewModel.PatientId,
-            IdNo: document.getElementById("IdNo").value,
+            IdNo: sanitizeInput(document.getElementById("IdNo").value),
             Active: true,
-            FamilyName: document.getElementById("FamilyName").value,
-            GivenName: document.getElementById("GivenName").value,
-            Telecom: document.getElementById("Telecom").value,
-            Gender: document.getElementById("Gender").value,
-            Birthday: document.getElementById("Birthday").value,
-            Address: document.getElementById("Address").value
+            FamilyName: sanitizeInput(document.getElementById("FamilyName").value, true),
+            GivenName: sanitizeInput(document.getElementById("GivenName").value, true),
+            Telecom: sanitizeInput(document.getElementById("Telecom").value),
+            Gender: sanitizeInput(document.getElementById("Gender").value),
+            Birthday: sanitizeInput(document.getElementById("Birthday").value),
+            Address: sanitizeInput(document.getElementById("Address").value, true)
         };
 
         // console.log('formData', formData);
@@ -212,8 +231,10 @@
             success: function (result) {
                 if (result > 0) {
                     alert("Save Successful");
+                } else if (result.status === "Error") {
+                    alert(result.error);
                 } else {
-                    alert(result.Error);
+                    alert(result.error);
                 }
             },
             error: function (err) {
