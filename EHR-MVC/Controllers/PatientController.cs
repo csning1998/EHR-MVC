@@ -2,16 +2,20 @@ using EHR_MVC.Services;
 using EHR_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using EHR_MVC.Repositories;
+using System.Reflection.Metadata.Ecma335;
 
 namespace EHR_MVC.Controllers
 {
     public class PatientController : Controller
     {
         private readonly PatientService _patientService;
+        private readonly PatientRepository _patientRepository;
 
-        public PatientController(PatientService patientService)
+        public PatientController(PatientService patientService, PatientRepository patientRepository)
         {
             _patientService = patientService;
+            _patientRepository = patientRepository;
         }
 
         public IActionResult Index()
@@ -34,6 +38,10 @@ namespace EHR_MVC.Controllers
             ViewBag.GenderCodeList = genderCodeList;
             ViewBag.PatientViewModel = patientViewModel;
 
+            return View();
+        }
+
+        public IActionResult Search() {
             return View();
         }
 
@@ -73,5 +81,34 @@ namespace EHR_MVC.Controllers
                 });
             }
         }
+
+        [HttpGet]
+        public IActionResult Query(long? patientId, string? idNo, string? familyName, string? givenName)
+        {
+            try
+            {
+                var resultList = new List<PatientViewModel>();
+                var dbResult = _patientRepository.QueryPatientList(patientId, idNo, familyName, givenName);
+
+                if (dbResult.Result.Count() > 0)
+                {
+                    resultList = dbResult.Result.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
+                    return Ok(dbResult.Result);
+                }
+                else {
+                    return BadRequest(dbResult);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    Status = "Error",
+                    Error = ex.Message
+                });
+            }
+        }
+
+
     }
 }
