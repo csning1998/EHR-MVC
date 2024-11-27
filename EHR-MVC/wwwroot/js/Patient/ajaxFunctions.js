@@ -1,4 +1,4 @@
-﻿function Submit() {
+﻿function submitPatientData() {
     const isTelecomValid = regexValidator('Telecom');
     const isIdNoValid = regexValidator('IdNo');
     const isBirthdayValid = regexValidator('Birthday');
@@ -39,11 +39,11 @@
     });
 }
 
-function Query() {
+function queryPatientData() {
     $.ajax({
-        url: '@Url.Content("~/Patient/Query")',
+        url: '/Patient/Query',
         method: 'GET',
-        datatype: 'json',
+        dataType: 'json',
         data: {
             patientId: document.getElementById("SearchPatientId").value,
             idNo: document.getElementById("SearchIdNo").value,
@@ -57,7 +57,7 @@ function Query() {
                 if (result.length > 0) {
                     document.getElementById("patientList").style.display = "block";
                     document.getElementById("noData").style.display = "none";
-                    SearchList(result);
+                    searchList(result);
                 } else {
                     document.getElementById("patientList").style.display = "none";
                     document.getElementById("noData").style.display = "block";
@@ -67,7 +67,7 @@ function Query() {
             alert(result.message);
         },
         error: function (err) {
-            console.error(err);
+            console.error(`Error ${err.status}: ${err.statusText}`);
             alert(err.statusText || "An unexpected error occurred.");
         }
     });

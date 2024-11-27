@@ -1,6 +1,4 @@
-﻿// wwwroot/js/formValidation.js
-
-function sanitizeInput(input, allowApostrophe = false) {
+﻿function sanitizeInput(input, allowApostrophe = false) {
     const illegalChars = allowApostrophe ? /[\";<>:\\|/?*]/g : /['\";<>:\\|/?*]/g;
     if (illegalChars.test(input)) {
         return input.replace(illegalChars, function (match) {

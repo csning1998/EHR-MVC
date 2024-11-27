@@ -9,8 +9,6 @@ namespace EHR_MVC.Models
         [Required]
         [RegularExpression(@"^([A-Z][1-2][0-9]{8}|[A-Z]{2}[0-9]{8})$", ErrorMessage = "Invalid ID Number format.")]
         public required string IdNo { get; set; }
-
-
         public bool Active { get; set; }
 
         [Required(ErrorMessage = "Family Name is required.")]
