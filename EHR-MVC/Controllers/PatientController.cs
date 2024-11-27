@@ -3,7 +3,6 @@ using EHR_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EHR_MVC.Repositories;
-using System.Reflection.Metadata.Ecma335;
 
 namespace EHR_MVC.Controllers
 {
@@ -83,20 +82,22 @@ namespace EHR_MVC.Controllers
         }
 
         [HttpGet]
-        public IActionResult Query(long? patientId, string? idNo, string? familyName, string? givenName)
+        public async Task<IActionResult> Query(long? patientId, string? idNo, string? familyName, string? givenName)
         {
+            Console.WriteLine("Query endpoint hit");
+
             try
             {
                 var resultList = new List<PatientViewModel>();
-                var dbResult = _patientRepository.QueryPatientList(patientId, idNo, familyName, givenName);
+                var dbResult = await _patientRepository.QueryPatientList(patientId, idNo, familyName, givenName);
 
-                if (dbResult.Result.Count() > 0)
+                if (dbResult.Any())
                 {
-                    resultList = dbResult.Result.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
-                    return Ok(dbResult.Result);
+                    resultList = dbResult.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
+                    return Ok(resultList);
                 }
                 else {
-                    return BadRequest(dbResult);
+                    return Ok(new List<PatientViewModel>());
                 }
             }
             catch (Exception ex)
@@ -104,7 +105,8 @@ namespace EHR_MVC.Controllers
                 return Json(new
                 {
                     Status = "Error",
-                    Error = ex.Message
+                    Error = ex.Message,
+                    StatusCode = 500
                 });
             }
         }
