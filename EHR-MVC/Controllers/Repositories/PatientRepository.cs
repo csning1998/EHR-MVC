@@ -1,7 +1,6 @@
 ﻿using EHR_MVC.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using EHR_MVC.Controllers;
 
 namespace EHR_MVC.Repositories
 {

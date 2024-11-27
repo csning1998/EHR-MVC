@@ -38,3 +38,37 @@
         }
     });
 }
+
+function Query() {
+    $.ajax({
+        url: '@Url.Content("~/Patient/Query")',
+        method: 'GET',
+        datatype: 'json',
+        data: {
+            patientId: document.getElementById("SearchPatientId").value,
+            idNo: document.getElementById("SearchIdNo").value,
+            familyName: document.getElementById("SearchFamilyName").value,
+            givenName: document.getElementById("SearchGivenName").value
+        },
+
+        success: function (result) {
+            if (result.status !== 'error') {
+                alert("Successfully inquired.");
+                if (result.length > 0) {
+                    document.getElementById("patientList").style.display = "block";
+                    document.getElementById("noData").style.display = "none";
+                    SearchList(result);
+                } else {
+                    document.getElementById("patientList").style.display = "none";
+                    document.getElementById("noData").style.display = "block";
+                }
+                return;
+            }
+            alert(result.message);
+        },
+        error: function (err) {
+            console.error(err);
+            alert(err.statusText || "An unexpected error occurred.");
+        }
+    });
+}
