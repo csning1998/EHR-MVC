@@ -49,6 +49,24 @@ namespace EHR_MVC.Controllers
         {
             try
             {
+                var patientDBModel = _patientService.ConvertViewModel2DBModel(patientViewModel);
+                var dbResult = false;
+
+                if (patientDBModel.PatientId == 0)
+                {
+                    dbResult = _patientService.InsertPatientAsync(patientDBModel).Result > 0;
+                }
+                else
+                {
+                    dbResult = _patientService.UpdatePatientAsync(patientDBModel).Result;
+                }
+
+                if (dbResult)
+                {
+                    return Ok(dbResult);
+                }
+
+
                 if (patientViewModel == null)
                 {
                     ModelState.AddModelError("", "Invalid data submitted.");
@@ -58,14 +76,6 @@ namespace EHR_MVC.Controllers
                 if (!ModelState.IsValid)
                 {
                     return View("Index", patientViewModel);
-                }
-
-                var patientDBModel = _patientService.ConvertViewModelToDBModel(patientViewModel);
-                var dbResult = await _patientService.InsertPatientAsync(patientDBModel);
-
-                if (dbResult > 0)
-                {
-                    return Ok(dbResult);
                 }
 
                 return BadRequest(dbResult);
@@ -96,9 +106,12 @@ namespace EHR_MVC.Controllers
                     resultList = dbResult.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
                     return Ok(resultList);
                 }
-                else {
+                else if (dbResult.Count() == 0) {
+                    return Ok("No data is found.");
+                } else {
                     return Ok(new List<PatientViewModel>());
                 }
+
             }
             catch (Exception ex)
             {

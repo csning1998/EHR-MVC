@@ -1,6 +1,7 @@
 ﻿using EHR_MVC.Models;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using EHR_MVC.Services;
 
 namespace EHR_MVC.Repositories
 {
@@ -8,12 +9,15 @@ namespace EHR_MVC.Repositories
     {
         private readonly string _connectionString;
 
+        //public PatientRepository(string connectionString, PatientService patientService)
         public PatientRepository(string connectionString)
         {
             _connectionString = connectionString;
+            //_patientService = patientService;
         }
         //public string? ConnectionString { get; }
 
+        // Insert
         public async Task<long> InsertPatientAsync(PatientDBModel patient)
         {
             long insertId = 0;
@@ -52,15 +56,17 @@ namespace EHR_MVC.Repositories
             return insertId;
         }
 
+        // Select
         public async Task<List<PatientDBModel>> QueryPatientList(long? PatientId = null, string? IdNo = null, string? familyName = null, string? givenName = null)
         {
             using (SqlConnection connection = new(_connectionString))
             {
                 var result = new List<PatientDBModel>();
 
-                var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE 1=1";
-
+                var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE 1=1 AND Active = @Active";
                 var param = new List<SqlParameter>();
+
+                param.Add(new SqlParameter("@Active", true));
 
                 if (PatientId != null)
                 {
@@ -74,12 +80,12 @@ namespace EHR_MVC.Repositories
                 }
                 if (familyName != null)
                 {
-                    queryStr += "and familyName = @familyName";
+                    queryStr += "and familyName = like '%' + @familyName +'%'";
                     param.Add(new SqlParameter("@familyName", familyName));
                 }
                 if (givenName != null)
                 {
-                    queryStr += "and givenName = @givenName";
+                    queryStr += "and givenName = like '%' + @givenName +'%'";
                     param.Add(new SqlParameter("@givenName", @givenName));
                 }
 
@@ -123,5 +129,48 @@ namespace EHR_MVC.Repositories
                 return result;
             }
         }
+
+        // Update
+        public async Task<bool> UpdatePatientAsync(PatientDBModel patient)
+        {
+            bool result = false;
+
+            using (SqlConnection connection = new(_connectionString)) {
+                var insertStr = @"INSERT INTO [EHR-MVC-DB].[dbo].[Patient]
+                              set @IdNo = IdNo, @Active = Active, @FamilyName = FamilyName, @GivenName = GivenName, @Telecom = Telecom, @Gender = Gender, @Birthday = Birthday, @Address = Address);
+                              WHERE PatientId = APatientId";
+
+                using SqlCommand command = new(insertStr, connection);
+                SqlParameter outPutValue = new("@InsertId", SqlDbType.BigInt)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                command.Parameters.Add(new SqlParameter("@PatientId", patient.PatientId));
+                command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
+                command.Parameters.Add(new SqlParameter("@Active", patient.Active));
+                command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
+                command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
+                command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
+                command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
+                command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
+                command.Parameters.Add(new SqlParameter("@Address", patient.Address));
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+                connection.Close();
+
+                var updateResult = command.ExecuteNonQuery();
+
+                if (updateResult > 0)
+                {
+                    result = true;
+                }
+
+                return result;
+            }
+        }
+
+        // To-do: Delete
+
     }
 }

@@ -13,7 +13,7 @@ namespace EHR_MVC.Services
             _patientRepository = patientRepository;
         }
 
-        public PatientDBModel ConvertViewModelToDBModel(PatientViewModel viewModel)
+        public PatientDBModel ConvertViewModel2DBModel(PatientViewModel viewModel)
         {
             return new PatientDBModel
             {
@@ -32,6 +32,12 @@ namespace EHR_MVC.Services
         {
             return await _patientRepository.InsertPatientAsync(patient);
         }
+
+        public async Task<bool> UpdatePatientAsync(PatientDBModel patient)
+        {
+            return await _patientRepository.UpdatePatientAsync(patient);
+        }
+
 
         public PatientViewModel ConvertPatientDBModel2ViewModel(PatientDBModel dbModel) {
             return new PatientViewModel()
