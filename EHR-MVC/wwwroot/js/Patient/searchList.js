@@ -22,8 +22,8 @@ function searchList(result) {
 
         // Populate cells
         cell1.innerHTML = `
-                <button type="button" class="btn btn-warning" onClick="Update(${patient.patientId})">Modify</button>
-                <button type="button" class="btn btn-danger" onClick="Delete(${patient.patientId})">Delete</button>`;
+                <button type="button" class="btn btn-warning" onClick="modifyPatientData(${patient.patientId})">Modify</button>
+                <button type="button" class="btn btn-danger" onClick="deletePatientData(${patient.patientId})">Delete</button>`;
         cell2.innerHTML = patient.patientId;
         cell3.innerHTML = `${patient.familyName} ${patient.givenName}`;
         cell4.innerHTML = (patient.gender === 'M') ? 'Male' : 'Female';
@@ -38,3 +38,17 @@ function searchList(result) {
     $('#patientList').removeClass('d-none');
     $('#noData').addClass('d-none')
 };
+
+function addEditForm() {
+    document.getElementById('editForm').style.display = "block";
+    document.getElementById('submitButton').style.display = "block";
+
+    document.getElementById("PatientID").value = 0;
+    document.getElementById("FamilyName").value = "";
+    document.getElementById("GivenName").value = "";
+    document.getElementById("IdNo").value = "";
+    document.getElementById("Birthday").value = new Date().toLocaleDateString('en-CA');
+    document.getElementById("Gender").value = "";
+    document.getElementById("Address").value = "";
+    document.getElementById("Telecom").value = "";
+}

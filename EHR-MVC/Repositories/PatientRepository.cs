@@ -8,13 +8,10 @@ namespace EHR_MVC.Repositories.Patient
     {
         private readonly string _connectionString;
 
-        //public PatientRepository(string connectionString, PatientService patientService)
         public PatientRepository(string connectionString)
         {
             _connectionString = connectionString;
-            //_patientService = patientService;
         }
-        //public string? ConnectionString { get; }
 
         // Insert
         public async Task<long> InsertPatientAsync(PatientDBModel patient)
@@ -62,7 +59,7 @@ namespace EHR_MVC.Repositories.Patient
             {
                 var result = new List<PatientDBModel>();
 
-                var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE 1=1 AND Active = @Active";
+                var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE 1=1";
                 var param = new List<SqlParameter>();
 
                 param.Add(new SqlParameter("@Active", true));
@@ -135,7 +132,7 @@ namespace EHR_MVC.Repositories.Patient
             bool result = false;
 
             using (SqlConnection connection = new(_connectionString)) {
-                var insertStr = @"INSERT INTO [EHR-MVC-DB].[dbo].[Patient]
+                var insertStr = @"UPDATE INTO [EHR-MVC-DB].[dbo].[Patient]
                               set @IdNo = IdNo, @Active = Active, @FamilyName = FamilyName, @GivenName = GivenName, @Telecom = Telecom, @Gender = Gender, @Birthday = Birthday, @Address = Address);
                               WHERE PatientId = APatientId";
 

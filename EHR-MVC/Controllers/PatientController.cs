@@ -41,6 +41,26 @@ namespace EHR_MVC.Controllers.Patient
         }
 
         public IActionResult Search() {
+
+            var patientViewModel = new PatientViewModel
+            {
+                IdNo = string.Empty,
+                FamilyName = string.Empty,
+                GivenName = string.Empty,
+                Telecom = string.Empty,
+                Gender = string.Empty,
+                Address = string.Empty,
+                Birthday = DateTime.Today
+            };
+
+            var genderCodeList = new List<SelectListItem> {
+                new() { Text = "Male", Value = "M" },
+                new() { Text = "Female", Value = "F" }
+            };
+
+            ViewBag.GenderCodeList = genderCodeList;
+            ViewBag.PatientViewModel = patientViewModel;
+
             return View();
         }
 

@@ -9,6 +9,7 @@
     }
     
     const formData = {
+        PatientId: sanitizeInput(document.getElementById("PatientID").value),
         IdNo: sanitizeInput(document.getElementById("IdNo").value),
         Active: true,
         FamilyName: sanitizeInput(document.getElementById("FamilyName").value, true),
@@ -53,14 +54,26 @@ function queryPatientData() {
 
         success: function (result) {
             if (result.status !== 'error') {
-                alert("Successfully inquired.");
-                if (result.length > 0) {
-                    document.getElementById("patientList").style.display = "block";
-                    document.getElementById("noData").style.display = "none";
-                    searchList(result);
-                } else {
-                    document.getElementById("patientList").style.display = "none";
-                    document.getElementById("noData").style.display = "block";
+                //alert("Successfully inquired.");
+                //if (result.length > 0) {
+                //    document.getElementById("patientList").style.display = "block";
+                //    document.getElementById("noData").style.display = "none";
+                //    searchList(result);
+                //} else {
+                //    document.getElementById("patientList").style.display = "none";
+                //    document.getElementById("noData").style.display = "block";
+                //}
+                if (result.status != 'error') {
+                    if (result.length > 0) {
+                        document.getElementById("patientList").style.display = "block";
+                        document.getElementById("noData").style.display = "none";
+                        alert("Successful");
+                        searchList(result);
+                    } else {
+                        document.getElementById("patientList").style.display = "none";
+                        document.getElementById("noData").style.display = "block";
+                        alert("No Data is found");
+                    }
                 }
                 return;
             }
@@ -71,4 +84,34 @@ function queryPatientData() {
             alert(err.statusText || "An unexpected error occurred.");
         }
     });
+}
+
+function modifyPatientData(id) {
+    $.ajax({
+        url: '/Patient/Save',
+        method: 'POST',
+        dataType: 'json',
+        data: { PatientId: id },
+        success: function (result) {
+            if (result) {
+                document.getElementById('editForm').style.display = "block";
+                document.getElementById('submitButton').style.display = "block";
+                document.getElementById("PatientID").value = result[0].patientId;
+                document.getElementById("FamilyName").value = result[0].familyName;
+                document.getElementById("GivenName").value = result[0].familyName;
+                document.getElementById("IdNo").value = result[0].givenName;
+                document.getElementById("Birthday").value = new Date(result[0].Birthday).toLocaleDateString('en-CA');
+                document.getElementById("Gender").value = result[0].Gender;
+                document.getElementById("Address").value = result[0].Address;
+                document.getElementById("Telecom").value = result[0].Telecom;
+                return;
+            }
+            alert(result.message);
+        },
+        error: function (err) {
+            alert(err.responseText);
+        }
+    });
+
+
 }
