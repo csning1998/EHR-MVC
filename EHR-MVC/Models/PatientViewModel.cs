@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace EHR_MVC.Models
+namespace EHR_MVC.ViewModels.Patient
 {
     public class PatientViewModel
     {

@@ -1,8 +1,8 @@
-﻿using EHR_MVC.Repositories;
-using EHR_MVC.Models;
-using EHR_MVC.Controllers;
+﻿using EHR_MVC.Repositories.Patient;
+using EHR_MVC.ViewModels.Patient;
+using EHR_MVC.DBModels.Patient;
 
-namespace EHR_MVC.Services
+namespace EHR_MVC.Services.Patient
 {
     public class PatientService
     {

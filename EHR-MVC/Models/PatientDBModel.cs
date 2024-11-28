@@ -1,4 +1,4 @@
-namespace EHR_MVC.Models
+namespace EHR_MVC.DBModels.Patient
 {
     public class PatientDBModel
     {

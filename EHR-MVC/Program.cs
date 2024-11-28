@@ -1,8 +1,6 @@
 using DotNetEnv;
-using EHR_MVC.Repositories;
-using EHR_MVC.Services;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System;
+using EHR_MVC.Repositories.Patient;
+using EHR_MVC.Services.Patient;
 
 var builder = WebApplication.CreateBuilder(args);
 
