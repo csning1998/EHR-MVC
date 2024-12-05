@@ -9,7 +9,6 @@
     }
     
     const formData = {
-        PatientId: sanitizeInput(document.getElementById("PatientID").value),
         IdNo: sanitizeInput(document.getElementById("IdNo").value),
         Active: true,
         FamilyName: sanitizeInput(document.getElementById("FamilyName").value, true),
