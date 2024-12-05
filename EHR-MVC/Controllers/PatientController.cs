@@ -1,4 +1,4 @@
-using EHR_MVC.Services.Patient;
+﻿using EHR_MVC.Services.Patient;
 using EHR_MVC.ViewModels.Patient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -69,47 +69,49 @@ namespace EHR_MVC.Controllers.Patient
         {
             try
             {
-                var patientDBModel = _patientService.ConvertViewModel2DBModel(patientViewModel);
-                var dbResult = false;
-
-                if (patientDBModel.PatientId == 0)
-                {
-                    dbResult = _patientService.InsertPatientAsync(patientDBModel).Result > 0;
-                }
-                else
-                {
-                    dbResult = _patientService.UpdatePatientAsync(patientDBModel).Result;
-                }
-
-                if (dbResult)
-                {
-                    return Ok(dbResult);
-                }
-
-
                 if (patientViewModel == null)
                 {
                     ModelState.AddModelError("", "Invalid data submitted.");
-                    return View("Index", patientViewModel);
+                    return BadRequest(new { StatusCode = 400, Message = "Invalid data submitted." });
                 }
 
                 if (!ModelState.IsValid)
                 {
-                    return View("Index", patientViewModel);
+                    return BadRequest(new { StatusCode = 400, Message = "Model validation failed." });
                 }
 
-                return BadRequest(dbResult);
+                var patientDBModel = _patientService.ConvertViewModel2DBModel(patientViewModel);
+                bool dbResult;
+
+                if (patientDBModel.PatientId == 0)
+                {
+                    dbResult = await _patientService.InsertPatientAsync(patientDBModel) > 0;
+                }
+                else
+                {
+                    dbResult = await _patientService.UpdatePatientAsync(patientDBModel);
+                }
+
+                if (dbResult)
+                {
+                    return Ok(new { StatusCode = 200, Message = "Operation successful." });
+                }
+                else
+                {
+                    return BadRequest(new { StatusCode = 400, Message = "Failed to save patient data." });
+                }
             }
             catch (Exception ex)
             {
-                return Json(new
+                return StatusCode(500, new
                 {
                     StatusCode = 500,
                     Status = "Error",
-                    Error = ex.Message
+                    Message = ex.Message
                 });
             }
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Query(long? patientId, string? idNo, string? familyName, string? givenName)

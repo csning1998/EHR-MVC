@@ -1,54 +1,62 @@
 function searchList(result) {
     const tableBody = document.getElementById("patientList").querySelector("tbody");
-
     tableBody.innerHTML = "";
 
-    // Clear existing rows
-    // while (tableBody.firstChild) {
-    //     tableBody.removeChild(tableBody.firstChild);
-    // }
-
-    // Populate table with new data
     result.forEach(patient => {
         const row = tableBody.insertRow();
 
-        // Create cells
-        const cell1 = row.insertCell(0);
-        const cell2 = row.insertCell(1);
-        const cell3 = row.insertCell(2);
-        const cell4 = row.insertCell(3);
-        const cell5 = row.insertCell(4);
-        const cell6 = row.insertCell(5);
+        const actionCell = row.insertCell(0);
+        const idCell = row.insertCell(1);
+        const nameCell = row.insertCell(2);
+        const genderCell = row.insertCell(3);
+        const idNoCell = row.insertCell(4);
+        const birthdayCell = row.insertCell(5);
 
-        // Populate cells
-        cell1.innerHTML = `
-                <button type="button" class="btn btn-warning" onClick="modifyPatientData(${patient.patientId})">Modify</button>
-                <button type="button" class="btn btn-danger" onClick="deletePatientData(${patient.patientId})">Delete</button>`;
-        cell2.innerHTML = patient.patientId;
-        cell3.innerHTML = `${patient.familyName} ${patient.givenName}`;
-        cell4.innerHTML = (patient.gender === 'M') ? 'Male' : 'Female';
-        cell5.innerHTML = patient.idNo;
-        cell6.innerHTML = new Date(patient.birthday).toLocaleDateString('zh-tw', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        });
+        const modifyButton = document.createElement('button');
+        modifyButton.type = 'button';
+        modifyButton.className = 'btn btn-warning';
+        modifyButton.textContent = 'Modify';
+        modifyButton.addEventListener('click', () => showModifyingList(patient));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'btn btn-danger';
+        deleteButton.textContent = 'Delete';
+        deleteButton.addEventListener('click', () => Delete(patient.patientId));
+
+        actionCell.appendChild(modifyButton);
+        actionCell.appendChild(deleteButton);
+
+        idCell.textContent = patient.patientId;
+        nameCell.textContent = `${patient.familyName} ${patient.givenName}`;
+        genderCell.textContent = (patient.gender === 'M') ? 'Male' : 'Female';
+        idNoCell.textContent = patient.idNo;
+        birthdayCell.textContent = new Date(patient.birthday).toLocaleDateString('en-CA');
     });
 
-    $('#patientList').removeClass('d-none');
-    $('#noData').addClass('d-none')
-};
+    document.getElementById('patientList').classList.remove('d-none');
+    document.getElementById('noData').classList.add('d-none');
+}
 
-function addEditForm() {
-    document.getElementById('editForm').style.display = "block";
+
+let currentPatient = null; // Global variable to store the current patient
+function showModifyingList(patient) {
+    currentPatient = patient; // Store the patient object
+    document.getElementById('editForm').style.display = "block"; 
     document.getElementById('submitButton').style.display = "block";
 
-    document.getElementById("PatientID").value = 0;
-    document.getElementById("FamilyName").value = "";
-    document.getElementById("GivenName").value = "";
-    document.getElementById("IdNo").value = "";
-    document.getElementById("Birthday").value = new Date().toLocaleDateString('en-CA');
-    document.getElementById("Gender").value = "";
-    document.getElementById("Address").value = "";
-    document.getElementById("Telecom").value = "";
+    document.getElementById("PatientID").value = patient.patientId;
+    document.getElementById("FamilyName").value = patient.familyName || '';
+    document.getElementById("GivenName").value = patient.givenName || '';
+    document.getElementById("IdNo").value = patient.idNo || '';
+    document.getElementById("Birthday").value = new Date(patient.birthday).toISOString().split('T')[0];
+    document.getElementById("Gender").value = patient.gender || '';
+    document.getElementById("Address").value = patient.address || '';
+    document.getElementById("Telecom").value = patient.telecom || '';
+
+    console.log("patient", patient)
+}
+
+function Delete(patientId) {
+    console.log(`Delete patient with ID: ${patientId}`);
 }

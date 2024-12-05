@@ -54,26 +54,14 @@ function queryPatientData() {
 
         success: function (result) {
             if (result.status !== 'error') {
-                //alert("Successfully inquired.");
-                //if (result.length > 0) {
-                //    document.getElementById("patientList").style.display = "block";
-                //    document.getElementById("noData").style.display = "none";
-                //    searchList(result);
-                //} else {
-                //    document.getElementById("patientList").style.display = "none";
-                //    document.getElementById("noData").style.display = "block";
-                //}
-                if (result.status != 'error') {
-                    if (result.length > 0) {
-                        document.getElementById("patientList").style.display = "block";
-                        document.getElementById("noData").style.display = "none";
-                        alert("Successful");
-                        searchList(result);
-                    } else {
-                        document.getElementById("patientList").style.display = "none";
-                        document.getElementById("noData").style.display = "block";
-                        alert("No Data is found");
-                    }
+                alert("Successfully inquired.");
+                if (result.length > 0) {
+                    document.getElementById("patientList").style.display = "block";
+                    document.getElementById("noData").style.display = "none";
+                    searchList(result);
+                } else {
+                    document.getElementById("patientList").style.display = "none";
+                    document.getElementById("noData").style.display = "block";
                 }
                 return;
             }
@@ -86,32 +74,44 @@ function queryPatientData() {
     });
 }
 
-function modifyPatientData(id) {
+function modifyPatientData() {
+    console.log("currentPatient", currentPatient)
+    if (!currentPatient) {
+        alert("No patient data available for modification.");
+        return;
+    }
+    const updatedPatient = {
+        PatientId: document.getElementById("PatientID").value,
+        FamilyName: document.getElementById("FamilyName").value,
+        GivenName: document.getElementById("GivenName").value,
+        IdNo: document.getElementById("IdNo").value,
+        Birthday: document.getElementById("Birthday").value,
+        Gender: document.getElementById("Gender").value,
+        Address: document.getElementById("Address").value,
+        Telecom: document.getElementById("Telecom").value,
+    };
+
+    console.log("Updated Patient Data:", updatedPatient);
+
+    if (!updatedPatient.PatientId) {
+        alert("Patient ID is required.");
+        return;
+    }
+
     $.ajax({
         url: '/Patient/Save',
         method: 'POST',
         dataType: 'json',
-        data: { PatientId: id },
+        data: updatedPatient,
         success: function (result) {
-            if (result) {
-                document.getElementById('editForm').style.display = "block";
-                document.getElementById('submitButton').style.display = "block";
-                document.getElementById("PatientID").value = result[0].patientId;
-                document.getElementById("FamilyName").value = result[0].familyName;
-                document.getElementById("GivenName").value = result[0].familyName;
-                document.getElementById("IdNo").value = result[0].givenName;
-                document.getElementById("Birthday").value = new Date(result[0].Birthday).toLocaleDateString('en-CA');
-                document.getElementById("Gender").value = result[0].Gender;
-                document.getElementById("Address").value = result[0].Address;
-                document.getElementById("Telecom").value = result[0].Telecom;
-                return;
-            }
-            alert(result.message);
+            console.log("AJAX call successful");
+            console.log("Result:", result);
+
+            alert("Patient data saved successfully.");
         },
         error: function (err) {
-            alert(err.responseText);
+            console.error("Error:", err);
+            alert(`Failed to save patient data: ${err.responseText}`);
         }
     });
-
-
 }

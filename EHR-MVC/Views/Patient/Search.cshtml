@@ -1,9 +1,9 @@
 ﻿@using EHR_MVC.ViewModels.Patient
 
 @section Scripts {
+    <script src="~/js/Patient/ajaxFunctions.js"></script>
     <script src="~/js/Patient/searchList.js"></script>
     <script src="~/js/Patient/formValidation.js"></script>
-    <script src="~/js/Patient/ajaxFunctions.js"></script>
 }
 
 @{
@@ -68,7 +68,7 @@
 
     <!-- The following section is disclosed after the user press the button "Modify()" -->
 
-    <div class="editForm" style="display: none">
+    <div class="editForm" id="editForm" style="display: none">
         <div class="row" style="display: none">
             <div class="form-inline col-md-12">
                 <label class="control-label">Patient ID</label>
@@ -78,27 +78,27 @@
         <div class="row">
             <div class="form-inline col-md-6">
                 <label class="control-label">Family (Last) Name</label>
-                <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName" required>
+                <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName">
             </div>
             <div class="form-inline col-md-6">
                 <label class="control-label">Given (First) Name</label>
-                <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName" required>
+                <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName">
             </div>
         </div>
         <div class="row">
             <div class="form-inline col-md-3">
                 <label class="control-label">Nationality ID Number</label>
                 <input type="text" class="form-control" id="IdNo" name="IdNo"
-                       value="@PatientViewModel.IdNo"
-                       oninput="regexValidator('IdNo')"
-                       required>
+                        value="@PatientViewModel.IdNo"
+                        oninput="regexValidator('IdNo')"
+                        >
             </div>
             <div class="form-inline col-md-3">
                 <label class="control-label">Date of Birth</label>
                 <input type="date" class="form-control" id="Birthday" name="Birthday"
-                       value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")"
-                       oninput="regexValidator('Birthday')"
-                       required>
+                        value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")"
+                        oninput="regexValidator('Birthday')"
+                        >
             </div>
             <div class="form-inline col-md-3">
                 <label class="control-label">Gender</label>
@@ -107,9 +107,9 @@
             <div class="form-group col-md-3">
                 <label class="control-label">Phone Number</label>
                 <input type="text" class="form-control" id="Telecom"
-                       value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))"
-                       oninput="regexValidator('Telecom')"
-                       required>
+                        value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))"
+                        oninput="regexValidator('Telecom')"
+                        >
             </div>
         </div>
         <div class="row">
@@ -119,7 +119,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="submitButton" onClick="submitPatientData()">Save</button>
+            <button type="button" class="btn btn-primary" id="submitButton" onClick="modifyPatientData()">Save</button>
         </div>
     </div>
 </div>

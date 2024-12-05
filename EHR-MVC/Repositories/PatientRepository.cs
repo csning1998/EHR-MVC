@@ -131,42 +131,47 @@ namespace EHR_MVC.Repositories.Patient
         {
             bool result = false;
 
-            using (SqlConnection connection = new(_connectionString)) {
-                var insertStr = @"UPDATE INTO [EHR-MVC-DB].[dbo].[Patient]
-                              set @IdNo = IdNo, @Active = Active, @FamilyName = FamilyName, @GivenName = GivenName, @Telecom = Telecom, @Gender = Gender, @Birthday = Birthday, @Address = Address);
-                              WHERE PatientId = APatientId";
-
-                using SqlCommand command = new(insertStr, connection);
-                SqlParameter outPutValue = new("@InsertId", SqlDbType.BigInt)
+            try
+            {
+                using (SqlConnection connection = new(_connectionString))
                 {
-                    Direction = ParameterDirection.Output
-                };
-                command.Parameters.Add(new SqlParameter("@PatientId", patient.PatientId));
-                command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
-                command.Parameters.Add(new SqlParameter("@Active", patient.Active));
-                command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
-                command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
-                command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
-                command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
-                command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy/MM/dd")));
-                command.Parameters.Add(new SqlParameter("@Address", patient.Address));
+                    var updateStr = @"UPDATE [EHR-MVC-DB].[dbo].[Patient]
+                              SET 
+                                  IdNo = @IdNo, 
+                                  Active = @Active, 
+                                  FamilyName = @FamilyName, 
+                                  GivenName = @GivenName, 
+                                  Telecom = @Telecom, 
+                                  Gender = @Gender, 
+                                  Birthday = @Birthday, 
+                                  Address = @Address
+                              WHERE PatientId = @PatientId";
 
-                await connection.OpenAsync();
-                await command.ExecuteNonQueryAsync();
-                connection.Close();
+                    using SqlCommand command = new(updateStr, connection);
 
-                var updateResult = command.ExecuteNonQuery();
+                    command.Parameters.Add(new SqlParameter("@PatientId", patient.PatientId));
+                    command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
+                    command.Parameters.Add(new SqlParameter("@Active", patient.Active));
+                    command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
+                    command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
+                    command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
+                    command.Parameters.Add(new SqlParameter("@Gender", patient.Gender));
+                    command.Parameters.Add(new SqlParameter("@Birthday", patient.Birthday.ToString("yyyy-MM-dd")));
+                    command.Parameters.Add(new SqlParameter("@Address", patient.Address));
 
-                if (updateResult > 0)
-                {
-                    result = true;
+                    await connection.OpenAsync();
+
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+                    result = rowsAffected > 0;
                 }
-
-                return result;
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdatePatientAsync: " + ex.Message);
+                throw;
+            }
+
+            return result;
         }
-
-        // To-do: Delete
-
     }
 }
