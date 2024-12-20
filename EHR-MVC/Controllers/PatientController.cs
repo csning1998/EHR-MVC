@@ -1,8 +1,8 @@
-﻿using EHR_MVC.Services.Patient;
-using EHR_MVC.ViewModels.Patient;
+﻿using EHR_MVC.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using EHR_MVC.Repositories.Patient;
+using EHR_MVC.Repositories;
+using EHR_MVC.Models.Patient;
 
 namespace EHR_MVC.Controllers.Patient
 {

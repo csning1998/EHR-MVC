@@ -1,8 +1,8 @@
-﻿using EHR_MVC.DBModels.Patient;
+﻿using EHR_MVC.Models.Patient;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
-namespace EHR_MVC.Repositories.Patient
+namespace EHR_MVC.Repositories
 {
     public class PatientRepository
     {

@@ -1,7 +1,46 @@
-﻿
-@{
-    ViewData["Title"] = "Login";
+﻿@{
+    ViewData["Title"] = "FHIR Implementation in EHR";
 }
 
-<h1>Login</h1>
+<div class="text-center">
 
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4 text-center">
+                <!-- Header -->
+                <!-- Login form -->
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4" style="color: #427677; font-weight: bold;">登入</h4>
+
+                        @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                        {
+                            <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                        }
+
+                        <!-- Form start -->
+                        <div class="form-group">
+                            <label for="userId" class="custom-label">Your ID</label>
+                            <input type="text" class="form-control" id="userId" name="userId" placeholder="Your user ID" required>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="userPassword" class="custom-label">Your Password</label>
+                            <input type="password" class="form-control" id="userPassword" name="userPassword" placeholder="Your user password" required>
+                        </div>
+
+                        <button type="button" class="btn custom-button mt-4 login-button" onclick="login()">Login</button>
+                        <br> 
+                        Don't have an account? <a href="@Url.Action("Register", "Home")" style="color: #4F4F4F;">Register</a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer with date and time -->
+        <div class="text-center mt-3 text-muted">
+            <p>@DateTime.Now.ToString("yyyy-MM-dd- dddd HH:mm:ss")</p>
+        </div>
+    </div>
+</div>

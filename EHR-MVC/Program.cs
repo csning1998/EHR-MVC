@@ -1,6 +1,6 @@
 using DotNetEnv;
-using EHR_MVC.Repositories.Patient;
-using EHR_MVC.Services.Patient;
+using EHR_MVC.Repositories;
+using EHR_MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +13,8 @@ Console.WriteLine($"Connection String: {connectionString}");
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<PatientRepository>(provider => new PatientRepository(connectionString));
 builder.Services.AddScoped<PatientService>();
+builder.Services.AddScoped<UserRepository>(provider => new UserRepository(connectionString));
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 
