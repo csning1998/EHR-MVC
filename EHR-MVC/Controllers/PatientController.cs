@@ -3,20 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using EHR_MVC.Repositories;
 using EHR_MVC.Models.Patient;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace EHR_MVC.Controllers.Patient
+namespace EHR_MVC.Controllers
 {
-    public class PatientController : Controller
+    public class PatientController(PatientService patientService, PatientRepository patientRepository) : Controller
     {
-        private readonly PatientService _patientService;
-        private readonly PatientRepository _patientRepository;
+        private readonly PatientService _patientService = patientService;
+        private readonly PatientRepository _patientRepository = patientRepository;
 
-        public PatientController(PatientService patientService, PatientRepository patientRepository)
-        {
-            _patientService = patientService;
-            _patientRepository = patientRepository;
-        }
-
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize]
         public IActionResult Index()
         {
             var patientViewModel = new PatientViewModel

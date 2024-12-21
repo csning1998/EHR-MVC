@@ -5,6 +5,7 @@ using EHR_MVC.Models.Users;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using System.Security.Claims;
 
 namespace EHR_MVC.Controllers
 {
@@ -127,10 +128,10 @@ namespace EHR_MVC.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<System.Security.Claims.Claim>
+            var claims = new List<Claim>
             {
-                new System.Security.Claims.Claim("UserId", user.UserId.ToString()),
-                new System.Security.Claims.Claim("Email", user.UserEmail)
+                new("UserId", user.UserId.ToString()),
+                new("Email", user.UserEmail)
             };
 
             var token = new JwtSecurityToken(

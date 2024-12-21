@@ -1,6 +1,4 @@
 using EHR_MVC.Models;
-using EHR_MVC.Models.Users;
-using EHR_MVC.Models.Patient;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

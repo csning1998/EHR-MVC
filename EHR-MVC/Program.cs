@@ -7,11 +7,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Retrive parameters from JwtSettings in appsetting.json
 var jwtSettingsSection = builder.Configuration.GetSection("JwtSettings");
-var issuer = jwtSettingsSection.GetValue<string>("Issuer");
-var audience = jwtSettingsSection.GetValue<string>("Audience");
-var secretKey = jwtSettingsSection.GetValue<string>("SecretKey");
-var expiresMinutes = jwtSettingsSection.GetValue<int>("ExpiresMinutes");
+var issuer = jwtSettingsSection["Issuer"];
+var audience = jwtSettingsSection["Audience"];
+var secretKey = jwtSettingsSection["SecretKey"];
+var expiresMinutes = Convert.ToInt32(jwtSettingsSection["ExpiresMinutes"]);
 
 // Load .env file
 Env.Load();
@@ -44,7 +45,28 @@ builder.Services
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.FromMinutes(5),
+
+            RoleClaimType = "UserId",
+            NameClaimType = "Email" 
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine("Authentication failed.");
+                Console.WriteLine($"Message: {context.Exception.Message}");
+                Console.WriteLine($"Inner Exception: {context.Exception.InnerException}");
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine("Unauthorized access attempt.");
+                Console.WriteLine($"Challenge context: {context.ErrorDescription}");
+                context.HandleResponse();
+                context.Response.Redirect("/Error/Unauthorized");
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -69,6 +91,17 @@ app.UseRouting();
 // AuthENTication first and then AuthORization
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStatusCodePages(context =>
+{
+    var response = context.HttpContext.Response;
+    if (response.StatusCode == 401)
+        response.Redirect("/Error/Status401");
+    
+    else if (response.StatusCode == 403)
+        response.Redirect("/Error/Status403");
+    return Task.CompletedTask;
+});
 
 // Setup the route
 app.MapControllerRoute(

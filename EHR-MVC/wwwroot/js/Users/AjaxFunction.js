@@ -49,7 +49,9 @@ function login() {
         data: JSON.stringify(formData),
         success: function (result) {
             if (result.statusCode === 200) {
+                console.log("Login result:", result);
                 alert("Successfully Login!");
+
                 localStorage.setItem("jwtToken", result.token);
                 window.location.href = "/Home/Index";
             } else if (result.status === "Error") {
@@ -62,5 +64,4 @@ function login() {
             alert("Error: " + (err.responseJSON?.message || err.responseText || "Unknown error"));
         }
     });
-
 }
