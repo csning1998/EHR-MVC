@@ -40,6 +40,7 @@
 }
 
 function queryPatientData() {
+    console.log("Quering")
     $.ajax({
         url: '/Patient/Query',
         method: 'GET',
@@ -54,13 +55,14 @@ function queryPatientData() {
         success: function (result) {
             if (result.status !== 'error') {
                 alert("Successfully inquired.");
+                const patientList = document.getElementById("patientList");
                 if (result.length > 0) {
-                    document.getElementById("patientList").style.display = "block";
+                    document.getElementById("patientList").style.display = "table";
                     document.getElementById("noData").style.display = "none";
                     searchList(result);
                 } else {
                     document.getElementById("patientList").style.display = "none";
-                    document.getElementById("noData").style.display = "block";
+                    document.getElementById("noData").style.display = "table";
                 }
                 return;
             }
@@ -103,10 +105,14 @@ function modifyPatientData() {
         dataType: 'json',
         data: updatedPatient,
         success: function (result) {
-            console.log("AJAX call successful");
-            console.log("Result:", result);
-
-            alert("Patient data saved successfully.");
+            if (result.status === 200) {
+                queryPatientData();
+                alert("Patient data saved successfully.");
+            } else if (result.status === "Error") {
+                alert(result.error);
+            } else {
+                alert(result.message);
+            }
         },
         error: function (err) {
             console.error("Error:", err);
