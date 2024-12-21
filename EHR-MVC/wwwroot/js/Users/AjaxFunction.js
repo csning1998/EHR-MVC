@@ -18,7 +18,7 @@
         contentType: 'application/json',
         data: JSON.stringify(formData),
         success: function (result) {
-            if (result > 0) {
+            if (result.statusCode === 200) {
                 alert("Successfully Registered!");
             } else if (result.status === "Error") {
                 alert(result.error)
@@ -48,8 +48,9 @@ function login() {
         contentType: 'application/json',
         data: JSON.stringify(formData),
         success: function (result) {
-            if (result > 0) {
+            if (result.statusCode === 200) {
                 alert("Successfully Login!");
+                localStorage.setItem("jwtToken", result.token);
                 window.location.href = "/Home/Index";
             } else if (result.status === "Error") {
                 alert(result.message || "Failed to login.");

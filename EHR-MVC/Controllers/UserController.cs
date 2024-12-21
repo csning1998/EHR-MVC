@@ -2,21 +2,16 @@
 using EHR_MVC.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using EHR_MVC.Models.Users;
-using System.Reflection.Metadata.Ecma335;
-using EHR_MVC.Models.Patient;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace EHR_MVC.Controllers
 {
-    public class UserController : Controller
+    public class UserController(UserService userService, IConfiguration configuration) : Controller
     {
-        private readonly UserService _userService;
-        private readonly UserRepository _userRepository;
-
-        public UserController(UserService userService, UserRepository userRepository)
-        {
-            _userService = userService;
-            _userRepository = userRepository;
-        }
+        private readonly UserService _userService = userService;
+        private readonly IConfiguration _configuration = configuration;
 
         [HttpGet]
         public IActionResult Login()
@@ -90,12 +85,11 @@ namespace EHR_MVC.Controllers
                 }
 
                 var userDBModel = await _userService.GetUserByEmailAsync(userViewModel.UserEmail);
-
                 if (userDBModel == null)
                 {
                     return BadRequest(new { StatusCode = 400, Message = "Email not found." });
                 }
-
+               
                 bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userViewModel.Password, userDBModel.PasswordHashed);
 
                 if (!isPasswordValid)
@@ -103,9 +97,12 @@ namespace EHR_MVC.Controllers
                     return BadRequest(new { StatusCode = 400, Message = "Invalid password." });
                 }
 
+                string token = GenerateJwtToken(userDBModel);
+
                 return Ok(new { 
                     StatusCode = 200, 
                     Message = "Login successful.",
+                    Token = token
                 });
             }
             catch (Exception ex)
@@ -117,6 +114,34 @@ namespace EHR_MVC.Controllers
                     ex.Message
                 });
             }
+        }
+
+        private string GenerateJwtToken(UserDBModel user)
+        {
+            // Read JWT configs from appsettings.json
+            var issuer = _configuration["JwtSettings:Issuer"];
+            var audience = _configuration["JwtSettings:Audience"];
+            var secretKey = _configuration["JwtSettings:SecretKey"];
+            var expiresMinutes = Convert.ToInt32(_configuration["JwtSettings:ExpiresMinutes"]);
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<System.Security.Claims.Claim>
+            {
+                new System.Security.Claims.Claim("UserId", user.UserId.ToString()),
+                new System.Security.Claims.Claim("Email", user.UserEmail)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiresMinutes),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
