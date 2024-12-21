@@ -80,7 +80,7 @@ namespace EHR_MVC.Controllers.Patient
                     return BadRequest(new { StatusCode = 400, Message = "Model validation failed." });
                 }
 
-                var patientDBModel = _patientService.ConvertViewModel2DBModel(patientViewModel);
+                var patientDBModel = _patientService.ConvertPatientViewModel2DBModel(patientViewModel);
                 bool dbResult;
 
                 if (patientDBModel.PatientId == 0)
@@ -107,7 +107,7 @@ namespace EHR_MVC.Controllers.Patient
                 {
                     StatusCode = 500,
                     Status = "Error",
-                    Message = ex.Message
+                    ex.Message
                 });
             }
         }

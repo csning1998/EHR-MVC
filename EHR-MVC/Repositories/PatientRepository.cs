@@ -4,14 +4,9 @@ using System.Data;
 
 namespace EHR_MVC.Repositories
 {
-    public class PatientRepository
+    public class PatientRepository(string connectionString)
     {
-        private readonly string _connectionString;
-
-        public PatientRepository(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
+        private readonly string _connectionString = connectionString;
 
         // Insert
         public async Task<long> InsertPatientAsync(PatientDBModel patient)

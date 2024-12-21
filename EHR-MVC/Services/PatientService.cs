@@ -12,7 +12,7 @@ namespace EHR_MVC.Services
             _patientRepository = patientRepository;
         }
 
-        public PatientDBModel ConvertViewModel2DBModel(PatientViewModel viewModel)
+        public PatientDBModel ConvertPatientViewModel2DBModel(PatientViewModel viewModel)
         {
             return new PatientDBModel
             {

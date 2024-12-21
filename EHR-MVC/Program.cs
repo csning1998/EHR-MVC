@@ -4,12 +4,12 @@ using EHR_MVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load .env file
 Env.Load();
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 Console.WriteLine($"Connection String: {connectionString}");
 
 // Add services to the container.
-
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<PatientRepository>(provider => new PatientRepository(connectionString));
 builder.Services.AddScoped<PatientService>();
@@ -26,13 +26,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Add middleware
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
+// Setup the route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
