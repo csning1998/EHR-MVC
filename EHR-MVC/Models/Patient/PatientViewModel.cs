@@ -34,5 +34,12 @@ namespace EHR_MVC.Models.Patient
         [Required(ErrorMessage = "Address is required.")]
         [DataType(DataType.Date, ErrorMessage = "Address should not left blank.")]
         public required string Address { get; set; }
+        public string? Email { get; set; }
+        public string? PostalCode { get; set; }
+        public string? Country { get; set; }
+        public string? PreferredLanguage { get; set; }
+        public string? EmergencyContactName { get; set; }
+        public string? EmergencyContactRelationship { get; set; }
+        public string? EmergencyContactPhone { get; set; }
     }
 }

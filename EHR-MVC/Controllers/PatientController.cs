@@ -8,39 +8,16 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace EHR_MVC.Controllers
 {
+
+
     public class PatientController(PatientService patientService, PatientRepository patientRepository) : Controller
     {
         private readonly PatientService _patientService = patientService;
         private readonly PatientRepository _patientRepository = patientRepository;
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[Authorize]
-        public IActionResult Index()
+        private static PatientViewModel InitializePatientViewModel()
         {
-            var patientViewModel = new PatientViewModel
-            {
-                IdNo = string.Empty,
-                FamilyName = string.Empty,
-                GivenName = string.Empty,
-                Telecom = string.Empty,
-                Gender = string.Empty,
-                Address = string.Empty
-            };
-
-            var genderCodeList = new List<SelectListItem> {
-                new() { Text = "Male", Value = "M" },
-                new() { Text = "Female", Value = "F" }
-            };
-
-            ViewBag.GenderCodeList = genderCodeList;
-            ViewBag.PatientViewModel = patientViewModel;
-
-            return View();
-        }
-
-        public IActionResult Search() {
-
-            var patientViewModel = new PatientViewModel
+            return new PatientViewModel
             {
                 IdNo = string.Empty,
                 FamilyName = string.Empty,
@@ -48,19 +25,43 @@ namespace EHR_MVC.Controllers
                 Telecom = string.Empty,
                 Gender = string.Empty,
                 Address = string.Empty,
+                Email = string.Empty,
+                PostalCode = string.Empty,
+                Country = string.Empty,
+                PreferredLanguage = string.Empty,
+                EmergencyContactName = string.Empty,
+                EmergencyContactRelationship = string.Empty,
+                EmergencyContactPhone = string.Empty,
                 Birthday = DateTime.Today
             };
+        }
 
-            var genderCodeList = new List<SelectListItem> {
+        private static List<SelectListItem> InitializeGenderCodeList()
+        {
+            return [
                 new() { Text = "Male", Value = "M" },
                 new() { Text = "Female", Value = "F" }
-            };
+            ];
+        }
 
-            ViewBag.GenderCodeList = genderCodeList;
-            ViewBag.PatientViewModel = patientViewModel;
 
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize]
+
+        public IActionResult Index()
+        {
+            ViewBag.GenderCodeList = InitializeGenderCodeList();
+            ViewBag.PatientViewModel = InitializePatientViewModel();
             return View();
         }
+
+        public IActionResult Search()
+        {
+            ViewBag.GenderCodeList = InitializeGenderCodeList();
+            ViewBag.PatientViewModel = InitializePatientViewModel();
+            return View();
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Save([FromForm] PatientViewModel patientViewModel)

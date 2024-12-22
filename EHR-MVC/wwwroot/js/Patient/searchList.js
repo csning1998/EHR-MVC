@@ -42,6 +42,7 @@ function searchList(result) {
 let currentPatient = null; // Global variable to store the current patient
 function showModifyingList(patient) {
     currentPatient = patient; // Store the patient object
+
     document.getElementById('editForm').style.display = "block"; 
     document.getElementById('submitButton').style.display = "block";
 
@@ -53,6 +54,13 @@ function showModifyingList(patient) {
     document.getElementById("Gender").value = patient.gender || '';
     document.getElementById("Address").value = patient.address || '';
     document.getElementById("Telecom").value = patient.telecom || '';
+    document.getElementById("Email").value = patient.email || '';
+    document.getElementById("PostalCode").value = patient.postalCode || '';
+    document.getElementById("Country").value = patient.country || '';
+    document.getElementById("PreferredLanguage").value = patient.preferredLanguage || '';
+    document.getElementById("EmergencyContactName").value = patient.emergencyContactName || '';
+    document.getElementById("EmergencyContactRelationship").value = patient.emergencyContactRelationship || '';
+    document.getElementById("EmergencyContactPhone").value = patient.emergencyContactPhone || '';
 
     console.log("patient", patient)
 }

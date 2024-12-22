@@ -1,16 +1,13 @@
 ﻿using EHR_MVC.Repositories;
 using EHR_MVC.Models.Patient;
+using Hl7.Fhir.Model;
+using Hl7.Fhir.Serialization;
 
 namespace EHR_MVC.Services
 {
-    public class PatientService
+    public class PatientService(PatientRepository patientRepository)
     {
-        private readonly PatientRepository _patientRepository;
-
-        public PatientService(PatientRepository patientRepository)
-        {
-            _patientRepository = patientRepository;
-        }
+        private readonly PatientRepository _patientRepository = patientRepository;
 
         public PatientDBModel ConvertPatientViewModel2DBModel(PatientViewModel viewModel)
         {
@@ -24,7 +21,14 @@ namespace EHR_MVC.Services
                 Telecom = viewModel.Telecom,
                 Gender = viewModel.Gender,
                 Birthday = viewModel.Birthday,
-                Address = viewModel.Address
+                Address = viewModel.Address,
+                Email = viewModel.Email,
+                PostalCode = viewModel.PostalCode,
+                Country = viewModel.Country,
+                PreferredLanguage = viewModel.PreferredLanguage,
+                EmergencyContactName = viewModel.EmergencyContactName,
+                EmergencyContactRelationship = viewModel.EmergencyContactRelationship,
+                EmergencyContactPhone = viewModel.EmergencyContactPhone
             };
         }
         public async Task<long> InsertPatientAsync(PatientDBModel patient)
@@ -50,7 +54,67 @@ namespace EHR_MVC.Services
                 Gender = dbModel.Gender,
                 Birthday = dbModel.Birthday,
                 Address = dbModel.Address,
+                Email = dbModel.Email,
+                PostalCode = dbModel.PostalCode,
+                Country = dbModel.Country,
+                PreferredLanguage = dbModel.PreferredLanguage,
+                EmergencyContactName = dbModel.EmergencyContactName,
+                EmergencyContactRelationship = dbModel.EmergencyContactRelationship,
+                EmergencyContactPhone = dbModel.EmergencyContactPhone
             };
+        }
+    }
+
+    public class FhirService
+    {
+        public string ConvertPatientToFhirJson(PatientDBModel patient)
+        {
+            var fhirPatient = new Patient
+            {
+                Id = patient.PatientId.ToString(),
+                Name =
+            [
+                new HumanName
+                {
+                    Use = HumanName.NameUse.Official,
+                    Family = patient.FamilyName,
+                    Given = [patient.GivenName]
+                }
+            ],
+                Gender = patient.Gender.Equals("m", StringComparison.CurrentCultureIgnoreCase) ? AdministrativeGender.Male : AdministrativeGender.Female,
+                BirthDate = patient.Birthday.ToString("yyyy-MM-dd"),
+                Address =
+            [
+                new Address
+                {
+                    Line = [patient.Address],
+                    PostalCode = patient.PostalCode,
+                    Country = patient.Country
+                }
+            ],
+                Telecom =
+            [
+                new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.Telecom),
+                new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, patient.Email)
+            ],
+                Contact =
+            [
+                new() {
+                    Name = new HumanName { Family = patient.EmergencyContactName },
+                    Telecom =
+                    [
+                        new(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.EmergencyContactPhone)
+                    ],
+                    Relationship =
+                    [
+                        new("http://terminology.hl7.org/CodeSystem/v2-0131", "E", "Emergency")
+                    ]
+                }
+            ]
+            };
+
+            var jsonSerializer = new FhirJsonSerializer();
+            return jsonSerializer.SerializeToString(fhirPatient);
         }
     }
 }

@@ -16,27 +16,45 @@
         Telecom: sanitizeInput(document.getElementById("Telecom").value),
         Gender: sanitizeInput(document.getElementById("Gender").value),
         Birthday: sanitizeInput(document.getElementById("Birthday").value),
-        Address: sanitizeInput(document.getElementById("Address").value, true)
+        Address: sanitizeInput(document.getElementById("Address").value, true),
+        Email: sanitizeInput(document.getElementById("Email").value),
+        PostalCode: sanitizeInput(document.getElementById("PostalCode").value),
+        Country: sanitizeInput(document.getElementById("Country").value),
+        PreferredLanguage: sanitizeInput(document.getElementById("PreferredLanguage").value),
+        EmergencyContactName: sanitizeInput(document.getElementById("EmergencyContactName").value, true),
+        EmergencyContactRelationship: sanitizeInput(document.getElementById("EmergencyContactRelationship").value, true),
+        EmergencyContactPhone: sanitizeInput(document.getElementById("EmergencyContactPhone").value)
     };
+
+    console.log("formData", formData)
 
     $.ajax({
         url: '/Patient/Save',
         method: 'POST',
         dataType: 'json',
         data: { PatientViewModel: formData },
-        success: function (result) {
-            if (result > 0) {
-                alert("Save Successful");
-            } else if (result.status === "Error") {
-                alert(result.error);
+        success: function (result, _textStatus, xhr) {
+            if (xhr.status === 200) {
+                alert(result.Message || "Operation successful.");
+            } else if (xhr.status === 400) {
+                alert(result.Message || "Bad request. Validation failed or invalid data.");
             } else {
-                alert(result.error);
+                alert("Unexpected success status: " + xhr.status);
             }
         },
-        error: function (err) {
-            alert(err.responseText);
+        error: function (xhr) {
+            if (xhr.status === 500) {
+                const errorResponse = xhr.responseJSON;
+                alert(errorResponse?.Message || "Server error occurred.");
+            } else if (xhr.status === 400) {
+                const errorResponse = xhr.responseJSON;
+                alert(errorResponse?.Message || "Bad request: invalid data or validation failed.");
+            } else {
+                alert("Unexpected error: " + xhr.status + " - " + xhr.statusText);
+            }
         }
     });
+
 }
 
 function queryPatientData() {
@@ -76,11 +94,12 @@ function queryPatientData() {
 }
 
 function modifyPatientData() {
-    console.log("currentPatient", currentPatient)
+    console.log("currentPatient", currentPatient);
     if (!currentPatient) {
         alert("No patient data available for modification.");
         return;
     }
+
     const updatedPatient = {
         PatientId: document.getElementById("PatientID").value,
         FamilyName: document.getElementById("FamilyName").value,
@@ -90,6 +109,13 @@ function modifyPatientData() {
         Gender: document.getElementById("Gender").value,
         Address: document.getElementById("Address").value,
         Telecom: document.getElementById("Telecom").value,
+        Email: document.getElementById("Email").value,
+        PostalCode: document.getElementById("PostalCode").value,
+        Country: document.getElementById("Country").value,
+        PreferredLanguage: document.getElementById("PreferredLanguage").value,
+        EmergencyContactName: document.getElementById("EmergencyContactName").value,
+        EmergencyContactRelationship: document.getElementById("EmergencyContactRelationship").value,
+        EmergencyContactPhone: document.getElementById("EmergencyContactPhone").value
     };
 
     console.log("Updated Patient Data:", updatedPatient);

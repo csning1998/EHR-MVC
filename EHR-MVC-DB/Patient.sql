@@ -8,5 +8,12 @@
     [Telecom] VARCHAR(10) NOT NULL,
     [Gender] VARCHAR(10) NOT NULL,
     [Birthday] DATE NOT NULL,
-    [Address] NVARCHAR(100) NOT NULL
+    [Address] NVARCHAR(100) NOT NULL,
+    [Email] NVARCHAR(100) NULL,
+    [PostalCode] NVARCHAR(10) NULL,
+    [Country] NVARCHAR(50) NULL,
+    [PreferredLanguage] NVARCHAR(50) NULL,
+    [EmergencyContactName] NVARCHAR(50) NULL,
+    [EmergencyContactRelationship] NVARCHAR(50) NULL,
+    [EmergencyContactPhone] NVARCHAR(20) NULL
 );
