@@ -12,20 +12,20 @@ function searchList(result) {
         const idNoCell = row.insertCell(4);
         const birthdayCell = row.insertCell(5);
 
-        const modifyButton = document.createElement('button');
-        modifyButton.type = 'button';
-        modifyButton.className = 'btn btn-warning';
-        modifyButton.textContent = 'Modify';
-        modifyButton.addEventListener('click', () => showModifyingList(patient));
+        const viewButton = document.createElement('button');
+        viewButton.type = 'button';
+        viewButton.className = 'btn btn-warning';
+        viewButton.textContent = 'View';
+        viewButton.addEventListener('click', () => showModifyingList(patient));
 
-        const deleteButton = document.createElement('button');
-        deleteButton.type = 'button';
-        deleteButton.className = 'btn btn-danger';
-        deleteButton.textContent = 'Delete';
-        deleteButton.addEventListener('click', () => Delete(patient.patientId));
+        const fhirButton = document.createElement('button');
+        fhirButton.type = 'button';
+        fhirButton.className = 'btn btn-success';
+        fhirButton.textContent = 'FHIR';
+        fhirButton.addEventListener('click', () => generateFHIRFormat(patient));
 
-        actionCell.appendChild(modifyButton);
-        actionCell.appendChild(deleteButton);
+        actionCell.appendChild(viewButton);
+        actionCell.appendChild(fhirButton);
 
         idCell.textContent = patient.patientId;
         nameCell.textContent = `${patient.familyName} ${patient.givenName}`;
@@ -43,8 +43,8 @@ let currentPatient = null; // Global variable to store the current patient
 function showModifyingList(patient) {
     currentPatient = patient; // Store the patient object
 
-    document.getElementById('editForm').style.display = "block"; 
-    document.getElementById('submitButton').style.display = "block";
+    //document.getElementById('editForm').style.display = "block"; 
+    //document.getElementById('submitButton').style.display = "block";
 
     document.getElementById("PatientID").value = patient.patientId;
     document.getElementById("FamilyName").value = patient.familyName || '';
@@ -63,8 +63,52 @@ function showModifyingList(patient) {
     document.getElementById("EmergencyContactPhone").value = patient.emergencyContactPhone || '';
 
     console.log("patient", patient)
+
+    setReadonly(true);
+
+    const patientModal = new bootstrap.Modal(document.getElementById('patientModal'));
+    patientModal.show();
 }
 
 function Delete(patientId) {
     console.log(`Delete patient with ID: ${patientId}`);
+}
+
+function setReadonly(isReadonly) {
+    const inputs = document.querySelectorAll("#patientModal input, #patientModal textarea, #patientModal select");
+    inputs.forEach(input => {
+        input.readOnly = isReadonly;
+        input.disabled = isReadonly;
+    });
+
+    document.getElementById("editButton").classList.toggle("d-none", !isReadonly);
+    document.getElementById("saveButton").classList.toggle("d-none", isReadonly);
+    document.getElementById("cancelButton").classList.toggle("d-none", isReadonly);
+}
+
+function enableEditing() {
+    setReadonly(false);
+}
+
+function cancelEditing() {
+    setReadonly(true);
+
+}
+
+function confirmDelete() {
+    if (currentPatient) {
+        if (confirm(`Are you sure you want to delete patient ID: ${currentPatient.patientId}?`)) {
+            Delete(currentPatient.patientId);
+            const patientModal = bootstrap.Modal.getInstance(document.getElementById('patientModal'));
+            patientModal.hide();
+        }
+    } else {
+        alert("No patient selected.");
+    }
+}
+
+function generateFHIRFormat(patient) {
+    console.log(`Generating FHIR format for patient ID: ${patient.patientId}`);
+    // Simulate FHIR generation logic here
+    alert(`FHIR format for patient ID: ${patient.patientId} generated successfully.`);
 }

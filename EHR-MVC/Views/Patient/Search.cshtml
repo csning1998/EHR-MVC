@@ -67,94 +67,107 @@
     </div>
 
     <!-- The following section is disclosed after the user press the button "Modify()" -->
-
-    <div class="editForm" id="editForm" style="display: none">
-        <div class="row" style="display: none">
-            <div class="form-inline col-md-12">
-                <label class="control-label">Patient ID</label>
-                <input type="text" class="form-control" id="PatientID" name="PatientID" value="@PatientViewModel.PatientId">
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label class="control-label">Family (Last) Name</label>
-                <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName">
-            </div>
-            <div class="form-group col-md-4">
-                <label class="control-label">Given (First) Name</label>
-                <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName">
-            </div>
-            <div class="form-group col-md-4">
-                <label class="control-label">Nationality ID Number</label>
-                <input type="text" class="form-control" id="IdNo" name="IdNo"
-                       value="@PatientViewModel.IdNo"
-                       oninput="regexValidator('IdNo')">
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label class="control-label">Birthday</label>
-                <input type="date" class="form-control" id="Birthday" name="Birthday"
-                        value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")"
-                        oninput="regexValidator('Birthday')"
-                        >
-            </div>
-            <div class="form-group col-md-4">
-                <label class="control-label">Gender</label>
-                @Html.DropDownList("Gender", GenderCodeList, "Please Select Gender", new { @class = "form-control", id = "Gender" })
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label class="control-label">Phone Number</label>
-                <input type="text" class="form-control" id="Telecom"
-                        value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))"
-                        oninput="regexValidator('Telecom')"
-                        >
-            </div>
-            <div class="row">
-                <div class="form-group col-md-4">
-                    <label class="control-label">Email</label>
-                    <input type="email" class="form-control" id="Email" name="Email" value="@PatientViewModel.Email">
+    <!-- Modal Structure -->
+    <div class="modal fade" id="patientModal" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="patientModalLabel">Patient Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="form-group col-md-4">
-                    <label class="control-label">Postal Code</label>
-                    <input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@PatientViewModel.PostalCode">
+                <div class="modal-body">
+                    <!-- Existing Form Fields -->
+                    <div class="editForm" id="editForm" >
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <label class="control-label">Patient ID</label>
+                                <input type="text" class="form-control" id="PatientID" name="PatientID" value="@PatientViewModel.PatientId">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="control-label">Family (Last) Name</label>
+                                <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label class="control-label">Given (First) Name</label>
+                                <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Nationality ID Number</label>
+                                <input type="text" class="form-control" id="IdNo" name="IdNo"
+                                       value="@PatientViewModel.IdNo"
+                                       oninput="regexValidator('IdNo')">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Birthday</label>
+                                <input type="date" class="form-control" id="Birthday" name="Birthday"
+                                        value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")"
+                                        oninput="regexValidator('Birthday')"
+                                        >
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Gender</label>
+                                @Html.DropDownList("Gender", GenderCodeList, "Please Select Gender", new { @class = "form-control", id = "Gender" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Phone Number</label>
+                                <input type="text" class="form-control" id="Telecom"
+                                       value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))"
+                                       oninput="regexValidator('Telecom')">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Email</label>
+                                <input type="email" class="form-control" id="Email" name="Email" value="@PatientViewModel.Email">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label class="control-label">Postal Code</label>
+                                <input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@PatientViewModel.PostalCode">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Country</label>
+                                    <input type="text" class="form-control" id="Country" name="Country" value="@PatientViewModel.Country">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="control-label">Preferred Language</label>
+                                    <input type="text" class="form-control" id="PreferredLanguage" name="PreferredLanguage" value="@PatientViewModel.PreferredLanguage">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <label class="control-label">Emergency Contact Name</label>
+                                    <input type="text" class="form-control" id="EmergencyContactName" name="EmergencyContactName" value="@PatientViewModel.EmergencyContactName">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="control-label">Relationship</label>
+                                    <input type="text" class="form-control" id="EmergencyContactRelationship" name="EmergencyContactRelationship" value="@PatientViewModel.EmergencyContactRelationship">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label class="control-label">Emergency Phone</label>
+                                    <input type="text" class="form-control" id="EmergencyContactPhone" name="EmergencyContactPhone" value="@PatientViewModel.EmergencyContactPhone">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label class="control-label">Address</label>
+                                    <textarea class="form-control" rows="3" id="Address" name="Address">@PatientViewModel.Address</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" id="editButton" onclick="enableEditing()">Edit</button>
+                                <button type="button" class="btn btn-primary d-none" id="saveButton" onclick="modifyPatientData()">Amend</button>
+                                <button type="button" class="btn btn-secondary d-none" id="cancelButton" onclick="cancelEditing()">Cancel</button>
+                                <button type="button" class="btn btn-danger" id="deleteButton" onclick="confirmDelete()">Delete</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label class="control-label">Country</label>
-                <input type="text" class="form-control" id="Country" name="Country" value="@PatientViewModel.Country">
-            </div>
-            <div class="form-group col-md-6">
-                <label class="control-label">Preferred Language</label>
-                <input type="text" class="form-control" id="PreferredLanguage" name="PreferredLanguage" value="@PatientViewModel.PreferredLanguage">
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-4">
-                <label class="control-label">Emergency Contact Name</label>
-                <input type="text" class="form-control" id="EmergencyContactName" name="EmergencyContactName" value="@PatientViewModel.EmergencyContactName">
-            </div>
-            <div class="form-group col-md-4">
-                <label class="control-label">Relationship</label>
-                <input type="text" class="form-control" id="EmergencyContactRelationship" name="EmergencyContactRelationship" value="@PatientViewModel.EmergencyContactRelationship">
-            </div>
-            <div class="form-group col-md-4">
-                <label class="control-label">Emergency Phone</label>
-                <input type="text" class="form-control" id="EmergencyContactPhone" name="EmergencyContactPhone" value="@PatientViewModel.EmergencyContactPhone">
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group col-md-12">
-                <label class="control-label">Address</label>
-                <textarea class="form-control" rows="3" id="Address" name="Address">@PatientViewModel.Address</textarea>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="submitButton" onClick="modifyPatientData()">Save</button>
         </div>
     </div>
 </div>
@@ -167,6 +180,20 @@
         padding: 15px;
         box-sizing: border-box;
     }
+
+    .modal-dialog {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+    }
+
+    .modal-content {
+        margin: auto;
+        max-width: 80%;
+        border-radius: 10px;
+    }
+
 
     #patientList {
         width: 100%;
