@@ -77,11 +77,13 @@ namespace EHR_MVC.Repositories
             {
                 queryStr += "and PatientId = @PatientId";
                 param.Add(new SqlParameter("@PatientId", @PatientId));
+                Console.WriteLine($"Querying PatientId: {PatientId}"); // Debug
             }
             if (IdNo != null)
             {
                 queryStr += "and IdNo= @IdNo";
                 param.Add(new SqlParameter("@IdNo", @IdNo));
+                Console.WriteLine($"Querying IdNo: {IdNo}"); // Debug
             }
             if (familyName != null)
             {
@@ -138,6 +140,7 @@ namespace EHR_MVC.Repositories
                 Console.WriteLine("(404) User Data not found.");
             }
             connection.Close();
+            Console.WriteLine($"Query Result Count: {result.Count}"); // Debug
             return result;
         }
 

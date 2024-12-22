@@ -72,45 +72,45 @@ namespace EHR_MVC.Services
             var fhirPatient = new Patient
             {
                 Id = patient.PatientId.ToString(),
+                Active = patient.Active,
                 Name =
-            [
-                new HumanName
-                {
-                    Use = HumanName.NameUse.Official,
-                    Family = patient.FamilyName,
-                    Given = [patient.GivenName]
-                }
-            ],
+                [
+                    new HumanName
+                    {
+                        Use = HumanName.NameUse.Official,
+                        Family = patient.FamilyName ?? string.Empty,
+                        Given = !string.IsNullOrEmpty(patient.GivenName) ? new[] { patient.GivenName } : null
+                    }
+                ],
                 Gender = patient.Gender.Equals("m", StringComparison.CurrentCultureIgnoreCase) ? AdministrativeGender.Male : AdministrativeGender.Female,
                 BirthDate = patient.Birthday.ToString("yyyy-MM-dd"),
                 Address =
-            [
-                new Address
-                {
-                    Line = [patient.Address],
-                    PostalCode = patient.PostalCode,
-                    Country = patient.Country
-                }
-            ],
+                [
+                    new() {
+                        Line = !string.IsNullOrEmpty(patient.Address) ? new[] { patient.Address } : null,
+                        PostalCode = patient.PostalCode,
+                        Country = patient.Country
+                    }
+                ],
                 Telecom =
-            [
-                new ContactPoint(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.Telecom),
-                new ContactPoint(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, patient.Email)
-            ],
+                [
+                    new(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.Telecom),
+                    new(ContactPoint.ContactPointSystem.Email, ContactPoint.ContactPointUse.Home, patient.Email)
+                ],
                 Contact =
-            [
-                new() {
-                    Name = new HumanName { Family = patient.EmergencyContactName },
-                    Telecom =
-                    [
-                        new(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.EmergencyContactPhone)
-                    ],
-                    Relationship =
-                    [
-                        new("http://terminology.hl7.org/CodeSystem/v2-0131", "E", "Emergency")
-                    ]
-                }
-            ]
+                [
+                    new() {
+                        Name = new HumanName { Family = patient.EmergencyContactName ?? string.Empty },
+                        Telecom =
+                        [
+                            new(ContactPoint.ContactPointSystem.Phone, ContactPoint.ContactPointUse.Mobile, patient.EmergencyContactPhone ?? string.Empty)
+                        ],
+                        Relationship =
+                        [
+                            new("http://terminology.hl7.org/CodeSystem/v2-0131", "E", "Emergency")
+                        ]
+                    }
+                ]
             };
 
             var jsonSerializer = new FhirJsonSerializer();

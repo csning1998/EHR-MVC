@@ -20,9 +20,9 @@ function searchList(result) {
 
         const fhirButton = document.createElement('button');
         fhirButton.type = 'button';
-        fhirButton.className = 'btn btn-success';
+        fhirButton.className = 'btn btn-primary';
         fhirButton.textContent = 'FHIR';
-        fhirButton.addEventListener('click', () => generateFHIRFormat(patient));
+        fhirButton.addEventListener('click', () => uploadToFhir(patient.patientId));
 
         actionCell.appendChild(viewButton);
         actionCell.appendChild(fhirButton);
@@ -37,7 +37,6 @@ function searchList(result) {
     document.getElementById('patientList').classList.remove('d-none');
     document.getElementById('noData').classList.add('d-none');
 }
-
 
 let currentPatient = null; // Global variable to store the current patient
 function showModifyingList(patient) {
@@ -105,10 +104,4 @@ function confirmDelete() {
     } else {
         alert("No patient selected.");
     }
-}
-
-function generateFHIRFormat(patient) {
-    console.log(`Generating FHIR format for patient ID: ${patient.patientId}`);
-    // Simulate FHIR generation logic here
-    alert(`FHIR format for patient ID: ${patient.patientId} generated successfully.`);
 }
