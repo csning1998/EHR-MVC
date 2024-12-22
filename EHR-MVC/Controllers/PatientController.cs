@@ -13,8 +13,7 @@ namespace EHR_MVC.Controllers
         private readonly PatientService _patientService = patientService;
         private readonly PatientRepository _patientRepository = patientRepository;
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //[Authorize]
+        [Authorize(Roles = "Basic")]
         public IActionResult Index()
         {
             var patientViewModel = new PatientViewModel
@@ -109,7 +108,6 @@ namespace EHR_MVC.Controllers
                 });
             }
         }
-
 
         [HttpGet]
         public async Task<IActionResult> Query(long? patientId, string? idNo, string? familyName, string? givenName)

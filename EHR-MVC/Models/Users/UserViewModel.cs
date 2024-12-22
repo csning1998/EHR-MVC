@@ -22,7 +22,6 @@ namespace EHR_MVC.Models.Users
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
-
-        // public string Role { get; set; } 
+        public string Role { get; set; } = "Basic";
     }
 }

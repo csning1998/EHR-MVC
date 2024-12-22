@@ -3,6 +3,7 @@ using EHR_MVC.Repositories;
 using EHR_MVC.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,6 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
 Console.WriteLine($"Connection String: {connectionString}");
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<PatientRepository>(provider => new PatientRepository(connectionString));
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<UserRepository>(provider => new UserRepository(connectionString));
@@ -47,8 +47,8 @@ builder.Services
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
             ClockSkew = TimeSpan.FromMinutes(5),
 
-            RoleClaimType = "UserId",
-            NameClaimType = "Email" 
+            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+            NameClaimType = ClaimTypes.Email
         };
         options.Events = new JwtBearerEvents
         {
@@ -68,7 +68,11 @@ builder.Services
                 return Task.CompletedTask;
             }
         };
-    });
+    })
+    
+    
+    
+    ;
 
 // 3.add Controllers, Views
 builder.Services.AddControllersWithViews();

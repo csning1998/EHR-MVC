@@ -7,7 +7,7 @@
         public string GivenName { get; set; }
         public required string UserEmail { get; set; }
         public required string PasswordHashed { get; set; }
-        //public string Role { get; set; }
+        public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

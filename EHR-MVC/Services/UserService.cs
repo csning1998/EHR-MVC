@@ -5,14 +5,10 @@ using System.Reflection;
 
 namespace EHR_MVC.Services
 {
-    public class UserService
+    public class UserService(UserRepository userRepository)
     {
-        private readonly UserRepository _userRepository;
+        private readonly UserRepository _userRepository = userRepository;
 
-        public UserService(UserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
         public UserDBModel ConvertUserViewModel2DBModel(UserViewModel viewModel) 
         {
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(viewModel.Password);
@@ -24,6 +20,7 @@ namespace EHR_MVC.Services
                 PasswordHashed = hashedPassword,
                 FamilyName = viewModel.FamilyName,
                 GivenName = viewModel.GivenName,
+                Role = string.IsNullOrEmpty(viewModel.Role) ? "Basic" : viewModel.Role,
                 CreatedAt = DateTime.UtcNow
             };
         }

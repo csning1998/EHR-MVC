@@ -4,7 +4,8 @@
         GivenName: document.getElementById("GivenName").value,
         UserEmail: document.getElementById("UserEmail").value,
         Password: document.getElementById("Password").value,
-        ConfirmPassword: document.getElementById("ConfirmPassword").value
+        ConfirmPassword: document.getElementById("ConfirmPassword").value,
+        Role: "Basic"
     };
 
     if (!formData.FamilyName || !formData.GivenName || !formData.UserEmail || !formData.Password || !formData.ConfirmPassword) {
@@ -53,7 +54,7 @@ function login() {
                 alert("Successfully Login!");
 
                 localStorage.setItem("jwtToken", result.token);
-                window.location.href = "/Home/Index";
+                window.location.href = "/Patient/Index";
             } else if (result.status === "Error") {
                 alert(result.message || "Failed to login.");
             } else {

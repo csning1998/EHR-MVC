@@ -17,9 +17,9 @@ namespace EHR_MVC.Repositories
             {
                 var insertStr = @"
                     INSERT INTO [EHR-MVC-DB].[dbo].[Users]
-                        (FamilyName, GivenName, UserEmail, PasswordHashed, CreatedAt)
+                        (FamilyName, GivenName, UserEmail, PasswordHashed, Role, CreatedAt)
                     VALUES
-                        (@FamilyName, @GivenName, @UserEmail, @PasswordHashed, @CreatedAt);
+                        (@FamilyName, @GivenName, @UserEmail, @PasswordHashed, @Role, @CreatedAt);
                     SELECT @InsertId = SCOPE_IDENTITY();
                 ";
 
@@ -34,6 +34,8 @@ namespace EHR_MVC.Repositories
                 command.Parameters.Add(new SqlParameter("@PasswordHashed", user.PasswordHashed));
                 command.Parameters.Add(new SqlParameter("@FamilyName", user.FamilyName));
                 command.Parameters.Add(new SqlParameter("@GivenName", user.GivenName));
+                command.Parameters.Add(new SqlParameter("@Role",
+                   string.IsNullOrEmpty(user.Role) ? "Basic" : user.Role)); 
                 command.Parameters.Add(new SqlParameter("@CreatedAt", user.CreatedAt));
 
                 await connection.OpenAsync();

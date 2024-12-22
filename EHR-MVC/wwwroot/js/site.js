@@ -1,7 +1,23 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿// Toggle Theme
+document.addEventListener("DOMContentLoaded", () => {
+    const html = document.getElementById("htmlPage");
+    const checkbox = document.getElementById("checkbox");
 
-// Write your JavaScript code.
+    // Load theme from LocalStorage or set to default
+    const savedTheme = localStorage.getItem("theme") || "light";
+    html.setAttribute("data-bs-theme", savedTheme);
+    checkbox.checked = savedTheme === "dark";
+
+    // Theme toggle logic
+    checkbox.addEventListener("change", () => {
+        const newTheme = checkbox.checked ? "dark" : "light";
+        html.setAttribute("data-bs-theme", newTheme);
+        localStorage.setItem("theme", newTheme); // Save theme to LocalStorage
+    });
+});
+
+
+// Json Web Token0
 function checkToken() {
     const token = localStorage.getItem("jwtToken");
     console.log("Token is valid: Bearer " + token);
@@ -23,6 +39,7 @@ function setAjaxAuthorizationHeader() {
 }
 
 $(document).ready(function () {
-    checkToken(); 
+    checkToken();
     setAjaxAuthorizationHeader();
 });
+

@@ -27,6 +27,49 @@ namespace EHR_MVC.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Login([FromBody] UserViewModel userViewModel)
+        {
+            try
+            {
+                if (userViewModel == null || string.IsNullOrWhiteSpace(userViewModel.UserEmail) || string.IsNullOrWhiteSpace(userViewModel.Password))
+                {
+                    return BadRequest(new { StatusCode = 400, Message = "Invalid input data." });
+                }
+
+                var userDBModel = await _userService.GetUserByEmailAsync(userViewModel.UserEmail);
+                if (userDBModel == null)
+                {
+                    return BadRequest(new { StatusCode = 400, Message = "Email not found." });
+                }
+
+                bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userViewModel.Password, userDBModel.PasswordHashed);
+
+                if (!isPasswordValid)
+                {
+                    return BadRequest(new { StatusCode = 400, Message = "Invalid password." });
+                }
+
+                string token = GenerateJwtToken(userDBModel);
+
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Login successful.",
+                    Token = token
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    StatusCode = 500,
+                    Status = "Error",
+                    ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserViewModel userViewModel)
         {
             try 
@@ -75,47 +118,6 @@ namespace EHR_MVC.Controllers
             
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UserViewModel userViewModel)
-        {
-            try
-            {
-                if (userViewModel == null || string.IsNullOrWhiteSpace(userViewModel.UserEmail) || string.IsNullOrWhiteSpace(userViewModel.Password))
-                {
-                    return BadRequest(new { StatusCode = 400, Message = "Invalid input data." });
-                }
-
-                var userDBModel = await _userService.GetUserByEmailAsync(userViewModel.UserEmail);
-                if (userDBModel == null)
-                {
-                    return BadRequest(new { StatusCode = 400, Message = "Email not found." });
-                }
-               
-                bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userViewModel.Password, userDBModel.PasswordHashed);
-
-                if (!isPasswordValid)
-                {
-                    return BadRequest(new { StatusCode = 400, Message = "Invalid password." });
-                }
-
-                string token = GenerateJwtToken(userDBModel);
-
-                return Ok(new { 
-                    StatusCode = 200, 
-                    Message = "Login successful.",
-                    Token = token
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new
-                {
-                    StatusCode = 500,
-                    Status = "Error",
-                    ex.Message
-                });
-            }
-        }
 
         private string GenerateJwtToken(UserDBModel user)
         {
@@ -123,15 +125,15 @@ namespace EHR_MVC.Controllers
             var issuer = _configuration["JwtSettings:Issuer"];
             var audience = _configuration["JwtSettings:Audience"];
             var secretKey = _configuration["JwtSettings:SecretKey"];
-            var expiresMinutes = Convert.ToInt32(_configuration["JwtSettings:ExpiresMinutes"]);
+            var expiresMinutes = Convert.ToInt32(_configuration["JwtSettings:ExpiresInMinutes"]);
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
             {
-                new("UserId", user.UserId.ToString()),
-                new("Email", user.UserEmail)
+                new("Email", user.UserEmail),
+                new(ClaimTypes.Role, string.IsNullOrEmpty(user.Role) ? "Basic" : user.Role),
             };
 
             var token = new JwtSecurityToken(
