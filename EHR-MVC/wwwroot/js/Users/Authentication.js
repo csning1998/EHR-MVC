@@ -7,7 +7,7 @@
     }
 
     $.ajax({
-        url: '/SomeProtectedEndpoint',
+        url: '/',
         method: 'GET',
         headers: {
             "Authorization": `Bearer ${token}`

@@ -29,11 +29,7 @@ builder.Services.AddScoped<UserService>();
 
 // Authentication + JWT Bearer
 builder.Services
-    .AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -45,34 +41,32 @@ builder.Services
             ValidIssuer = issuer,
             ValidAudience = audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-            ClockSkew = TimeSpan.FromMinutes(5),
+            //ClockSkew = TimeSpan.FromMinutes(5),
 
-            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-            NameClaimType = ClaimTypes.Email
+            //RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+            //NameClaimType = ClaimTypes.Email
         };
-        options.Events = new JwtBearerEvents
-        {
-            OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine("Authentication failed.");
-                Console.WriteLine($"Message: {context.Exception.Message}");
-                Console.WriteLine($"Inner Exception: {context.Exception.InnerException}");
-                return Task.CompletedTask;
-            },
-            OnChallenge = context =>
-            {
-                Console.WriteLine("Unauthorized access attempt.");
-                Console.WriteLine($"Challenge context: {context.ErrorDescription}");
-                context.HandleResponse();
-                context.Response.Redirect("/Error/Unauthorized");
-                return Task.CompletedTask;
-            }
-        };
-    })
-    
-    
-    
-    ;
+        //options.Events = new JwtBearerEvents
+        //{
+        //    OnAuthenticationFailed = context =>
+        //    {
+        //        Console.WriteLine("Authentication failed.");
+        //        Console.WriteLine($"Message: {context.Exception.Message}");
+        //        Console.WriteLine($"Inner Exception: {context.Exception.InnerException}");
+        //        return Task.CompletedTask;
+        //    },
+        //    OnChallenge = context =>
+        //    {
+        //        Console.WriteLine("Unauthorized access attempt.");
+        //        Console.WriteLine($"Challenge context: {context.ErrorDescription}");
+        //        context.HandleResponse();
+        //        context.Response.Redirect("/Error/Unauthorized");
+        //        return Task.CompletedTask;
+        //    }
+        //};
+    });
+
+builder.Services.AddAuthorization();
 
 // 3.add Controllers, Views
 builder.Services.AddControllersWithViews();

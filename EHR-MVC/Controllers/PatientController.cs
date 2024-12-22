@@ -13,7 +13,8 @@ namespace EHR_MVC.Controllers
         private readonly PatientService _patientService = patientService;
         private readonly PatientRepository _patientRepository = patientRepository;
 
-        [Authorize(Roles = "Basic")]
+
+        [Authorize]
         public IActionResult Index()
         {
             var patientViewModel = new PatientViewModel

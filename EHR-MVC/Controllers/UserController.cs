@@ -51,6 +51,14 @@ namespace EHR_MVC.Controllers
 
                 string token = GenerateJwtToken(userDBModel);
 
+                //Response.Cookies.Append("jwtToken", token, new CookieOptions
+                //{
+                //    HttpOnly = true,
+                //    Secure = true,
+                //    SameSite = SameSiteMode.Strict,
+                //    Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:ExpiresInMinutes"]))
+                //});
+
                 return Ok(new
                 {
                     StatusCode = 200,
