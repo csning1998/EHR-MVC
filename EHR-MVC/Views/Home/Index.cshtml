@@ -2,13 +2,93 @@
     ViewData["Title"] = "FHIR Implementation in EHR";
 }
 
-<div class="text-center">
+<div class="container mt-5">
+    <!-- Header Section -->
+    <div class="text-center">
+        <h1 class="display-4">@ViewData["Title"]</h1>
+        <p class="lead text-muted">
+            A modern solution for Electronic Health Record (EHR) management with FHIR standards integration.
+        </p>
+    </div>
 
-    <nav>
+    <!-- Features Section -->
+    <div class="row text-center mt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="fas fa-users fa-3x mb-3 text-primary"></i>
+                    <h5 class="card-title">Patient Management</h5>
+                    <p class="card-text">Efficiently manage patient data with a secure and user-friendly interface.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="fas fa-file-medical-alt fa-3x mb-3 text-success"></i>
+                    <h5 class="card-title">FHIR Data Exchange</h5>
+                    <p class="card-text">Leverage FHIR standards for seamless interoperability between systems.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <i class="fas fa-lock fa-3x mb-3 text-warning"></i>
+                    <h5 class="card-title">Data Security</h5>
+                    <p class="card-text">Ensure the privacy and security of health records with advanced encryption.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    </nav>
-
-    <h1 class="display-4">Introduction</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-
+    <!-- Call-to-Action Section -->
+    <div class="text-center mt-5">
+        <p class="lead">Get started today and improve your EHR system.</p>
+        <a href="@Url.Action("Register", "User")" class="btn btn-primary btn-lg me-3">Register Now</a>
+        <a href="@Url.Action("Login", "User")" class="btn btn-outline-secondary btn-lg">Login</a>
+    </div>
 </div>
+
+<style>
+    .display-4 {
+        font-weight: bold;
+    }
+
+    .lead {
+        font-size: 18px;
+    }
+
+    .card {
+        border-radius: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-title {
+        font-weight: bold;
+    }
+
+    .card-text {
+        font-size: 15px;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 18px;
+    }
+
+    .btn-outline-secondary {
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 5px;
+    }
+
+    .text-muted {
+        color: #6c757d;
+    }
+</style>

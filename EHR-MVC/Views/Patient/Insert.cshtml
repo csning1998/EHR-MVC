@@ -1,0 +1,201 @@
+﻿@using EHR_MVC.Models.Patient
+@model EHR_MVC.Models.Patient.PatientViewModel
+
+@section Scripts {
+    <script src="~/js/Patient/dummyData.js"></script>
+    <script src="~/js/Patient/formValidation.js"></script>
+    <script src="~/js/Patient/ajaxFunctions.js"></script>
+}
+
+@{
+    ViewData["Title"] = "Add Patient Information";
+    List<SelectListItem> GenderCodeList = (List<SelectListItem>)ViewBag.GenderCodeList;
+    PatientViewModel PatientViewModel = (PatientViewModel)ViewBag.PatientViewModel;
+}
+
+<div id="patientForm">
+    <div class="text-center mb-4">
+        <h1 class="display-6">Add Patient Information</h1>
+    </div>
+
+    <!-- Dummy Data Selector -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <label class="form-label">Select a Patient (Dummy Data)</label>
+            <select class="form-select" id="dummyPatientSelect" onchange="fillDummyData()">
+                <option value="">-- Select a Dummy Patient --</option>
+                <option value="1">Ronnie O'Sullivan</option>
+                <option value="2">Uncle Roger</option>
+                <option value="3">Elon Musk</option>
+                <option value="4">Jimmy OYang</option>
+                <option value="5">Brett Chen (2Set Violin)</option>
+                <option value="6">Eddy Chen (2Set Violin)</option>
+                <option value="7">Jamie Oliver</option>
+                <option value="8">Gordon Ramsay</option>
+                <option value="9">Steven He</option>
+                <option value="10">Will Smith</option>
+                <option value="11">Bruce Lee</option>
+                <option value="12">Donald Trump</option>
+                <option value="13">Joe Biden</option>
+                <option value="14">Invalid Data (Test)</option>
+            </select>
+        </div>
+    </div>
+
+
+    <!-- Patient Basic Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Family (Last) Name</label>
+                    <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Given (First) Name</label>
+                    <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Identification and Contact Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Nationality ID Number</label>
+                    <input type="text" class="form-control" id="IdNo" name="IdNo" value="@PatientViewModel.IdNo" oninput="regexValidator('IdNo')" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Date of Birth</label>
+                    <input type="date" class="form-control" id="Birthday" name="Birthday" value="@PatientViewModel.Birthday.ToString("yyyy-MM-dd")" oninput="regexValidator('Birthday')" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Gender</label>
+                    @Html.DropDownList("Gender", GenderCodeList, "Please Select Gender", new { @class = "form-select", id = "Gender" })
+                </div>
+            </div>
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="Telecom" value="@((string.IsNullOrEmpty(PatientViewModel.Telecom) ? "09" : PatientViewModel.Telecom))" oninput="regexValidator('Telecom')" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="Email" value="@PatientViewModel.Email" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Country</label>
+                    <input type="text" class="form-control" id="Country" value="@PatientViewModel.Country" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Postal Code</label>
+                    <input type="text" class="form-control" id="PostalCode" value="@PatientViewModel.PostalCode" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Preferred Language</label>
+                    <input type="text" class="form-control" id="PreferredLanguage" value="@PatientViewModel.PreferredLanguage" required>
+                </div>
+            </div>
+            <div class="mt-3">
+                <label class="form-label">Address</label>
+                <textarea class="form-control" rows="3" id="Address" name="Address">@PatientViewModel.Address</textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emergency Contact Information -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Emergency Contact Name</label>
+                    <input type="text" class="form-control" id="EmergencyContactName" value="@PatientViewModel.EmergencyContactName" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Relationship</label>
+                    <input type="text" class="form-control" id="EmergencyContactRelationship" value="@PatientViewModel.EmergencyContactRelationship" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Emergency Contact Phone</label>
+                    <input type="text" class="form-control" id="EmergencyContactPhone" value="@PatientViewModel.EmergencyContactPhone" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-end">
+        <button id="submitButton" type="button" class="btn btn-primary" onClick="submitPatientData()">Save</button>
+    </div>
+</div>
+<style>
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .row.g-3 > .col-md-4,
+    .row.g-3 > .col-md-6,
+    .row.g-3 > .col-md-3 {
+        margin-bottom: 15px;
+    }
+
+    #dummyPatientSelect {
+        font-size: 16px;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+    }
+
+    .btn-primary {
+        font-size: 16px;
+        padding: 10px 20px;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #145a86;
+            transform: translateY(-2px);
+        }
+
+    textarea.form-control {
+        resize: none;
+        border-radius: 5px;
+    }
+
+    input.form-control, select.form-select {
+        font-size: 16px;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+    }
+
+        input.form-control:focus, select.form-select:focus, textarea.form-control:focus {
+            border-color: #1b6ec2;
+            box-shadow: 0 0 0 0.2rem rgba(27, 110, 194, 0.25);
+        }
+
+    .text-end {
+        margin-top: 20px;
+    }
+</style>

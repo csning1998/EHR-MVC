@@ -1,52 +1,121 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
+<div class="container mt-5">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h1 class="display-5">@ViewData["Title"]</h1>
+        <p class="text-muted">Updated on: @DateTime.Now.ToString("yyyy-MM-dd")</p>
+    </div>
 
------------------------------------------------------------------
+    <!-- Policy Sections -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Introduction</h2>
+                    <p>We are committed to safeguarding the privacy and confidentiality of all users interacting with our website and services, especially in regard to protected health information (PHI) exchanged through FHIR (Fast Healthcare Interoperability Resources) standards. This Privacy Policy outlines our practices for handling, processing, and protecting personal and medical data collected on this site.</p>
+                </div>
+            </div>
 
-<h2>Introduction</h2>
-<p>We are committed to safeguarding the privacy and confidentiality of all users interacting with our website and services, especially in regard to protected health information (PHI) exchanged through FHIR (Fast Healthcare Interoperability Resources) standards. This Privacy Policy outlines our practices for handling, processing, and protecting personal and medical data collected on this site.</p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Data Collection</h2>
+                    <p>Our site collects personal and medical information in compliance with the FHIR data exchange standards. The types of data collected include, but are not limited to:</p>
+                    <ul>
+                        <li>Personal identification information (name, date of birth, gender, address)</li>
+                        <li>Health-related information (medical history, treatments, medications)</li>
+                        <li>Telecom and contact information necessary for providing and coordinating healthcare</li>
+                    </ul>
+                    <p>We only collect information necessary for healthcare services, data exchange, and regulatory compliance.</p>
+                </div>
+            </div>
 
-<h2>Data Collection</h2>
-<p>Our site collects personal and medical information in compliance with the FHIR data exchange standards. The types of data collected include, but are not limited to:</p>
-<ul>
-    <li>Personal identification information (name, date of birth, gender, address)</li>
-    <li>Health-related information (medical history, treatments, medications)</li>
-    <li>Telecom and contact information necessary for providing and coordinating healthcare</li>
-</ul>
-<p>We only collect information necessary for healthcare services, data exchange, and regulatory compliance.</p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Data Use</h2>
+                    <p>All data collected will be used solely for the purposes of providing healthcare services, facilitating FHIR-based data exchanges, and ensuring proper care coordination. We do not share or sell personal or medical data with third parties for advertising, marketing, or any non-healthcare-related purposes. Any use of the data must comply with applicable privacy laws, including the GDPR, HIPAA, and local data protection regulations.</p>
+                </div>
+            </div>
 
-<h2>Data Use</h2>
-<p>All data collected will be used solely for the purposes of providing healthcare services, facilitating FHIR-based data exchanges, and ensuring proper care coordination. We do not share or sell personal or medical data with third parties for advertising, marketing, or any non-healthcare-related purposes. Any use of the data must comply with applicable privacy laws, including the GDPR, HIPAA, and local data protection regulations.</p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Data Storage and Security</h2>
+                    <p>All personal and medical data is stored in secured databases with high-level encryption. Access to this information is strictly limited to authorized personnel who require it to perform healthcare-related services or support. We implement advanced security protocols, including firewalls, data encryption, and secure access controls, to prevent unauthorized access, data breaches, or potential loss of data.</p>
+                </div>
+            </div>
 
-<h2>Data Storage and Security</h2>
-<p>All personal and medical data is stored in secured databases with high-level encryption. Access to this information is strictly limited to authorized personnel who require it to perform healthcare-related services or support. We implement advanced security protocols, including firewalls, data encryption, and secure access controls, to prevent unauthorized access, data breaches, or potential loss of data.</p>
+            <!-- Additional Sections -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Contact Us</h2>
+                    <p>If you have questions, concerns, or requests regarding your privacy and data protection, please reach out to our Privacy Office at <a href="mailto:410570554@m365.fju.edu.tw">410570554@m365.fju.edu.tw</a>.</p>
+                </div>
+            </div>
 
-<h2>Data Retention</h2>
-<p>We retain personal and medical data only for as long as is necessary to fulfill the purposes outlined in this policy and to comply with legal, regulatory, or policy requirements. Upon request, and subject to applicable legal restrictions, users have the right to request the deletion of their personal data.</p>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Policy Updates</h2>
+                    <p>We may update this Privacy Policy periodically to reflect changes in regulations, best practices, or service offerings. Any updates will be promptly posted on this page, and we encourage users to review our Privacy Policy regularly to stay informed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<h2>User Rights</h2>
-<p>Under privacy laws, users have specific rights concerning their personal and medical data, including:</p>
-<ul>
-    <li>The right to access the personal data we hold about them</li>
-    <li>The right to correct or update incorrect information</li>
-    <li>The right to request deletion or restriction of their personal data</li>
-    <li>The right to data portability, allowing users to obtain and reuse their data across different services</li>
-</ul>
-<p>To exercise these rights, please contact us directly, and we will respond to your request within the legally mandated timeframe.</p>
+<style>
+    h1.display-5 {
+        font-weight: bold;
+    }
 
-<h2>Data Sharing</h2>
-<p>We only share personal and medical data with third parties when absolutely necessary for healthcare provision, regulatory compliance, or as required by law. Any data exchange, especially through FHIR, follows strict security standards, including data anonymization or pseudonymization where appropriate, to protect user identities during healthcare interoperability operations.</p>
+    h2.h4 {
+        font-weight: 600;
+    }
 
-<h2>Third-Party Services</h2>
-<p>We may use third-party services or applications to support our operations, such as secure cloud storage, data analytics, or medical data exchange platforms. All third-party providers must comply with our strict data protection standards and are obligated to safeguard the data shared with them under contractual agreements.</p>
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
 
-<h2>Contact Us</h2>
-<p>
-    If you have questions, concerns, or requests regarding your privacy and data protection, please reach out to our Privacy Office at <a href="mailto: 410570554@m365.fju.edu.tw"> 410570554@m365.fju.edu.tw </a>.
-</p>
-<h2>Policy Updates</h2>
-<p>We may update this Privacy Policy periodically to reflect changes in regulations, best practices, or service offerings. Any updates will be promptly posted on this page, and we encourage users to review our Privacy Policy regularly to stay informed.</p>
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: none;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
 
-<p>By using our website and services, you agree to the terms of this Privacy Policy and consent to the practices described herein.</p>
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-body {
+        padding: 20px 30px;
+    }
+
+    ul {
+        margin-top: 10px;
+        padding-left: 20px;
+        list-style-type: disc;
+    }
+
+        ul li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+    a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    .text-muted {
+        font-size: 14px;
+    }
+
+
+</style>

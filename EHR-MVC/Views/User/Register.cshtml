@@ -16,33 +16,88 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>Registration</h1>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Page Header -->
+            <h1 class="text-center mb-4">Registration</h1>
 
-<form id="registrationForm">
-    <div class="form-group">
-        <label asp-for="FamilyName"></label>
-        <input asp-for="FamilyName" id="FamilyName" class="form-control" />
-        <span asp-validation-for="FamilyName" class="text-danger"></span>
+            <!-- Registration Form -->
+            <form id="registrationForm">
+                <!-- Family Name -->
+                <div class="mb-3">
+                    <label asp-for="FamilyName" class="form-label">Family Name</label>
+                    <input asp-for="FamilyName" id="FamilyName" class="form-control" />
+                    <span asp-validation-for="FamilyName" class="text-danger"></span>
+                </div>
+
+                <!-- Given Name -->
+                <div class="mb-3">
+                    <label asp-for="GivenName" class="form-label">Given Name</label>
+                    <input asp-for="GivenName" id="GivenName" class="form-control" />
+                    <span asp-validation-for="GivenName" class="text-danger"></span>
+                </div>
+
+                <!-- User Email -->
+                <div class="mb-3">
+                    <label asp-for="UserEmail" class="form-label">Email</label>
+                    <input asp-for="UserEmail" id="UserEmail" class="form-control" />
+                    <span asp-validation-for="UserEmail" class="text-danger"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" id="Password" class="form-control" type="password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" id="ConfirmPassword" class="form-control" type="password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="button" class="btn btn-primary btn-lg" onclick="register()">Register</button>
+                </div>
+            </form>
+
+            <!-- Register Link -->
+            <div class="text-center mt-3">
+                <small>
+                    Already have an account? <a href="@Url.Action("Login", "User")">Login</a>
+                </small>
+            </div>
+        </div>
+        <!-- Footer -->
+        <div class="text-center mt-4 text-muted">
+            <small>@DateTime.Now.ToString("yyyy-MM-dd - dddd HH:mm:ss")</small>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="GivenName"></label>
-        <input asp-for="GivenName" id="GivenName" class="form-control" />
-        <span asp-validation-for="GivenName" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="UserEmail"></label>
-        <input asp-for="UserEmail" id="UserEmail" class="form-control" />
-        <span asp-validation-for="UserEmail" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Password"></label>
-        <input asp-for="Password" id="Password" class="form-control" type="password" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" id="ConfirmPassword" class="form-control" type="password" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-    <button type="button" class="btn btn-primary" onclick="register()">Register</button>
-</form>
+</div>
+
+<style>
+    form .form-label {
+        font-weight: bold;
+    }
+
+    form .form-control {
+        font-size: 16px;
+        padding: 10px;
+        height: calc(2.5rem + 2px);
+    }
+
+    .text-danger {
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .btn-primary {
+        border-radius: 5px;
+        font-size: 18px;
+    }
+
+</style>

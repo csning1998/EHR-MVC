@@ -56,14 +56,14 @@ namespace EHR_MVC.Controllers
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         //[Authorize]
 
-        public IActionResult Index()
+        public IActionResult Insert()
         {
             ViewBag.GenderCodeList = InitializeGenderCodeList();
             ViewBag.PatientViewModel = InitializePatientViewModel();
             return View();
         }
 
-        public IActionResult Search()
+        public IActionResult Inquire()
         {
             ViewBag.GenderCodeList = InitializeGenderCodeList();
             ViewBag.PatientViewModel = InitializePatientViewModel();

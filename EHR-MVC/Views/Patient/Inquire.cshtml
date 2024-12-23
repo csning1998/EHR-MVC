@@ -15,54 +15,58 @@
 }
 
 <div id="patientForm">
-    <div class="modal-header">
-        <h1 class="display-4">Inquire Patient Information</h1>
+    <div class="mb-4 text-center">
+        <h1 class="display-6">Inquire Patient Information</h1>
     </div>
 
-    <div class="modal-body">
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <label for="SearchPatientId" class="form-label">Patient ID</label>
-                <input type="text" class="form-control" id="SearchPatientId" name="SearchPatientId"
-                value="">
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="SearchPatientId" class="form-label">Patient ID</label>
+                    <input type="text" class="form-control" id="SearchPatientId" name="SearchPatientId" value="">
+                </div>
+                <div class="col-md-3">
+                    <label for="SearchIdNo" class="form-label">Nationality ID Number</label>
+                    <input type="text" class="form-control" id="SearchIdNo" name="SearchIdNo" value="AB12345678">
+                </div>
+                <div class="col-md-3">
+                    <label for="SearchFamilyName" class="form-label">Family (Last) Name</label>
+                    <input type="text" class="form-control" id="SearchFamilyName" name="SearchFamilyName" value="">
+                </div>
+                <div class="col-md-3">
+                    <label for="SearchGivenName" class="form-label">Given (First) Name</label>
+                    <input type="text" class="form-control" id="SearchGivenName" name="SearchGivenName" value="">
+                </div>
             </div>
-            <div class="col-md-3">
-                <label for="SearchIdNo" class="form-label">Nationality ID Number</label>
-                <input type="text" class="form-control" id="SearchIdNo" name="SearchIdNo" value="AB12345678">
-            </div>
-            <div class="col-md-3">
-                <label for="SearchFamilyName" class="form-label">Family (Last) Name</label>
-                <input type="text" class="form-control" id="SearchFamilyName" name="SearchFamilyName" value="">
-            </div>
-            <div class="col-md-3">
-                <label for="SearchGivenName" class="form-label">Given (First) Name</label>
-                <input type="text" class="form-control" id="SearchGivenName" name="SearchGivenName" value="">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-12">
+            <div class="text-end mt-3">
                 <button type="button" class="btn btn-primary" onClick="queryPatientData()">Inquire</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-body">
-        <div class="table-responsive" id="patientList"; display: none>
-            <table class="table table-striped" display: table">
-                <thead style="vertical-align: middle;">
-                    <tr>
-                        <th></th>
-                        <th>Patient ID</th>
-                        <th>Name</th>
-                        <th>Gender</th>
-                        <th>Nationality ID</th>
-                        <th>Birthday</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-            <div>
-                <span id="noData" style="display: none" class="d-none">Query information not found.</span>
+    <div class="card">
+        <div class="card-header text-center">
+            <h5>Patient List</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive" id="patientList" style="display: none;">
+                <table class="table table-striped table-hover">
+                    <thead class="table">
+                        <tr>
+                            <th>Operations</th>
+                            <th>Patient ID</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Nationality ID</th>
+                            <th>Birthday</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="text-center mt-3">
+                    <span id="noData" class="text-warning d-none">Query information not found.</span>
+                </div>
             </div>
         </div>
     </div>
@@ -171,9 +175,10 @@
             </div>
         </div>
     </div>
+    <!-- FHIR JSON Modal -->
     <div class="modal fade" id="fhirModal" tabindex="-1" aria-labelledby="fhirModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg modal-dialog-centered fhir-modal-dialog">
+            <div class="modal-content fhir-modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="fhirModalLabel">FHIR JSON</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -193,34 +198,50 @@
 
 
 <style>
-    .modal-body {
-        width: 100%;
-        padding: 15px;
-        box-sizing: border-box;
+
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .fhir-modal-body {
-        max-height: 75vh;
-        overflow-y: auto;
-        padding: 15px;
-        box-sizing: border-box;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-header {
+        font-weight: bold;
+        border-bottom: 1px solid #dee2e6;
     }
 
-    .modal-dialog {
-        max-width: 90%;
+    .card-body {
+        padding: 20px;
+    }
+
+    .text-warning {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .fhir-modal-dialog {
+        width: auto;
         margin: auto;
     }
 
-    .modal-content {
+    .fhir-modal-content {
         border-radius: 10px;
     }
 
     .fhir-modal-body {
-        background-color: #f9f9f9;
         border: 1px solid #ddd;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-height: 75vh;
+        overflow-y: auto;
+        padding: 15px;
     }
+
 
     #patientList {
         width: 100%;
@@ -233,16 +254,15 @@
     }
 
     .table {
+        border-collapse: collapse;
+        width: 100%;
     }
-        .table th,
-        .table td {
-            padding: 10px;
-            vertical-align: middle;
-            text-align: left;
-        }
 
         .table th,
         .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 12px;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -253,6 +273,15 @@
                 text-align: center;
                 margin: 5px;
             }
+
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1); /* Light blue hover effect */
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.05);
+    }
 
     #patientList {
         display: none;
@@ -269,12 +298,6 @@
 
     .table-debug {
         border: 2px solid blue;
-    }
-
-    .modal-dialog {
-        max-width: 90%;
-        width: auto;
-        margin: auto;
     }
 
     .form-control {
