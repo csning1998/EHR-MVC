@@ -59,7 +59,7 @@ const dummyPatients = {
     }
 };
 
-function fillDummyData() {
+function fillDummyPatientData() {
     const selectedValue = document.getElementById("dummyPatientSelect").value;
     if (dummyPatients[selectedValue]) {
         const patient = dummyPatients[selectedValue];

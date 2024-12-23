@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
 
-namespace EHR_MVC.Controllers
+namespace EHR_MVC.Controllers.User
 {
     public class UserController(UserService userService, IConfiguration configuration) : Controller
     {
@@ -29,7 +29,7 @@ namespace EHR_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] UserViewModel userViewModel)
         {
-            try 
+            try
             {
                 if (userViewModel == null)
                 {
@@ -48,11 +48,11 @@ namespace EHR_MVC.Controllers
                 {
                     dbResult = await _userService.RegisterUserAsync(userDBModel) > 0;
                 }
-                else 
+                else
                 {
                     return BadRequest(new { StatusCode = 400, Message = "This email has already been registered." });
                 }
-                
+
                 if (dbResult)
                 {
                     return Ok(new { StatusCode = 200, Message = "Registration successful!" });
@@ -61,8 +61,8 @@ namespace EHR_MVC.Controllers
                 {
                     return BadRequest(new { StatusCode = 400, Message = "Failed to save patient data." });
                 }
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, new
                 {
@@ -72,7 +72,7 @@ namespace EHR_MVC.Controllers
 
                 });
             }
-            
+
         }
 
         [HttpPost]
@@ -90,7 +90,7 @@ namespace EHR_MVC.Controllers
                 {
                     return BadRequest(new { StatusCode = 400, Message = "Email not found." });
                 }
-               
+
                 bool isPasswordValid = BCrypt.Net.BCrypt.Verify(userViewModel.Password, userDBModel.PasswordHashed);
 
                 if (!isPasswordValid)
@@ -100,8 +100,9 @@ namespace EHR_MVC.Controllers
 
                 string token = GenerateJwtToken(userDBModel);
 
-                return Ok(new { 
-                    StatusCode = 200, 
+                return Ok(new
+                {
+                    StatusCode = 200,
                     Message = "Login successful.",
                     Token = token
                 });

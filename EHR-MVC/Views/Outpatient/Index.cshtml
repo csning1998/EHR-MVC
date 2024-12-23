@@ -1,0 +1,155 @@
+﻿@using EHR_MVC.Models.Patient
+@model EHR_MVC.Models.Patient.PatientViewModel
+
+@{
+    ViewData["Title"] = "Add New Outpatient Record";
+    List<SelectListItem> GenderCodeList = (List<SelectListItem>)ViewBag.GenderCodeList;
+    PatientViewModel PatientViewModel = (PatientViewModel)ViewBag.PatientViewModel;
+
+}
+@section Scripts {
+    <script src="~/js/Patient/dummyData.js"></script>
+    <script src="~/js/Outpatient/dummyData.js"></script>
+}
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-xl font-weight-medium">Add New Outpatient Record</h2>
+        <div class="modal-body">
+            <label class="control-label">Select a Patient (Dummy Data)</label>
+            <select class="form-control" id="dummyPatientSelect" onchange="fillDummyPatientData()">
+                <option value="">-- Select a Dummy Patient --</option>
+                <option value="1">Fake Data 1</option>
+                <option value="2">Fake Data 2</option>
+                <option value="3">Fake Data 3</option>
+                <option value="4">Fake Data 4 (Debug)</option>
+            </select>
+        </div>
+    </div>
+
+    <form id="outpatientForm">
+        <!-- Patient Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">Patient Information</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Family (Last) Name</label>
+                        <input type="text" class="form-control" id="FamilyName" name="FamilyName" value="@PatientViewModel.FamilyName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Given (First) Name</label>
+                        <input type="text" class="form-control" id="GivenName" name="GivenName" value="@PatientViewModel.GivenName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="MedicalRecordNumber" class="form-label">Medical Record Number:</label>
+                        <input type="text" class="form-control" id="MedicalRecordNumber" placeholder="Enter medical record number">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Gender</label>
+                        @Html.DropDownList("Gender", GenderCodeList, "Please Select Gender", new { @class = "form-control", id = "Gender" })
+                    </div>
+                    <div class="col-md-6">
+                        <label for="NationalID" class="form-label">National ID Number:</label>
+                        <input type="text" class="form-control" id="IdNo" placeholder="Enter national ID">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Birthday" class="form-label">Date of Birth:</label>
+                        <input type="date" class="form-control" id="Birthday">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Institution -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">Medical Institution</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="VisitDate" class="form-label">Visit Date:</label>
+                        <input type="date" class="form-control" id="VisitDate">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="OrganizationName" class="form-label">Organization Name:</label>
+                        <select class="form-select" id="OrganizationName" onchange="updateOrganizationDetails()">
+                            <option value="">Select organization</option>
+                            <!-- Dynamic Options -->
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="OrganizationCode" class="form-label">Organization Code:</label>
+                        <input type="text" class="form-control" id="OrganizationCode" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="DispensingDate" class="form-label">Dispensing Date:</label>
+                        <input type="date" class="form-control" id="DispensingDate">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="SerialNumber" class="form-label">Health Card Serial Number:</label>
+                        <input type="text" class="form-control" id="SerialNumber" placeholder="Enter serial number">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medication Orders -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">Medication Orders</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="MedicationTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Medication Name</th>
+                            <th>Medication Code</th>
+                            <th>Days of Administration</th>
+                            <th>Total Quantity / Unit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" onclick="addMedicationRow()">Add New Item</button>
+            </div>
+        </div>
+
+        <!-- Non-Medication Orders -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">Non-Medication Orders</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered" id="NonMedicationTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Order Name</th>
+                            <th>Order Code</th>
+                            <th>Total Quantity / Unit</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" onclick="addNonMedicationRow()">Add New Item</button>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+            <button type="button" class="btn btn-success" onclick="submitOutpatientData()">Submit</button>
+        </div>
+    </form>
+</div>

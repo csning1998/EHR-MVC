@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using System.Collections.Concurrent;
 
-namespace EHR_MVC.Controllers
+namespace EHR_MVC.Controllers.Patient
 {
 
     public static class FhirJsonCache
@@ -18,7 +18,7 @@ namespace EHR_MVC.Controllers
 
     [ApiController]
     [Route("[controller]/[action]")]
-    public class PatientController(PatientService patientService, PatientRepository patientRepository) : Controller
+    public class PatientController(PatientService patientService, PatientRepository patientRepository) : BaseController
     {
         private readonly PatientService _patientService = patientService;
         private readonly PatientRepository _patientRepository = patientRepository;
@@ -44,32 +44,20 @@ namespace EHR_MVC.Controllers
             };
         }
 
-        private static List<SelectListItem> InitializeGenderCodeList()
-        {
-            return [
-                new() { Text = "Male", Value = "M" },
-                new() { Text = "Female", Value = "F" }
-            ];
-        }
-
-
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         //[Authorize]
 
         public IActionResult Index()
         {
-            ViewBag.GenderCodeList = InitializeGenderCodeList();
             ViewBag.PatientViewModel = InitializePatientViewModel();
             return View();
         }
 
         public IActionResult Search()
         {
-            ViewBag.GenderCodeList = InitializeGenderCodeList();
             ViewBag.PatientViewModel = InitializePatientViewModel();
             return View();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Save([FromForm] PatientViewModel patientViewModel)
