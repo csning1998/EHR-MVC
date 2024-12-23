@@ -5,5 +5,6 @@
     [GivenName] NVARCHAR(50) NOT NULL,
     [UserEmail] NVARCHAR(50) NOT NULL,
     [PasswordHashed] NVARCHAR(255) NOT NULL,
+    [Role] NVARCHAR(15) NOT NULL,
     [CreatedAt] DATETIME NOT NULL
 );

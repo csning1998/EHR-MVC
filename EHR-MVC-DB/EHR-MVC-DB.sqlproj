@@ -60,5 +60,12 @@
   <ItemGroup>
     <Build Include="Patient.sql" />
     <Build Include="Users.sql" />
+    <Build Include="Organization.sql" />
+    <Build Include="Practitioner.sql" />
+    <Build Include="Encounter.sql" />
+    <Build Include="Condition.sql" />
+    <Build Include="MedicationRequest.sql" />
+    <Build Include="Observation.sql" />
+    <Build Include="UserPractioner.sql" />
   </ItemGroup>
 </Project>
