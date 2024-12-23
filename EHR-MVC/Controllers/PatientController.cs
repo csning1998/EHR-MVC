@@ -13,7 +13,7 @@ namespace EHR_MVC.Controllers
 
     public static class FhirJsonCache
     {
-        public static Dictionary<string, string> CachedFhirJson = new();
+        public static Dictionary<string, string> CachedFhirJson = [];
     }
 
     [ApiController]
@@ -220,8 +220,10 @@ namespace EHR_MVC.Controllers
         }
 
         [HttpPost]
+        //[Route("Patient/SubmitFhirJson")]
         public async Task<IActionResult> SubmitFhirJson([FromBody] TokenRequest request)
         {
+            Console.WriteLine($"Received token: {request.Token}");
             try
             {
                 // Examine Token
@@ -237,9 +239,9 @@ namespace EHR_MVC.Controllers
                 }
 
                 // 3) Send to HAPI FHIR SERVER
-                using var client = new HttpClient { BaseAddress = new Uri("http://localhost:8080/fhir") };
+                using var client = new HttpClient { BaseAddress = new Uri("http://localhost:8080/fhir/") };
                 var content = new StringContent(fhirJson, Encoding.UTF8, "application/fhir+json");
-                var response = await client.PostAsync("Patient", content);
+                var response = await client.PostAsync("/fhir/Patient", content);
 
                 var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -266,6 +268,7 @@ namespace EHR_MVC.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"Error: {ex.Message}");
                 return StatusCode(500, new
                 {
                     StatusCode = 500,
@@ -273,96 +276,6 @@ namespace EHR_MVC.Controllers
                     ex.Message
                 });
             }
-
-            //    [HttpPost]
-            //    public async Task<IActionResult> GetFhirJson([FromBody] UploadRequest request)
-            //    {
-            //        try
-            //        {
-            //            if (request == null || request.PatientId <= 0)
-            //            {
-            //                return BadRequest(new { StatusCode = 400, Message = "Invalid PatientId." });
-            //            }
-
-            //            // Retrieve data from DB
-            //            var patientDBModel = (await _patientRepository.QueryPatientList(PatientId: request.PatientId)).FirstOrDefault();
-
-            //            if (patientDBModel == null)
-            //            {
-            //                return NotFound(new { StatusCode = 404, Message = "Patient not found." });
-            //            }
-
-            //            // Convert to JSON
-            //            var fhirService = new FhirService();
-            //            var fhirJson = fhirService.ConvertPatientToFhirJson(patientDBModel);
-
-            //            FhirJsonCache[request.PatientId] = fhirJson;
-
-            //            return Ok(new { StatusCode = 200, FhirJson = fhirJson });
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            return StatusCode(500, new
-            //            {
-            //                StatusCode = 500,
-            //                Status = "Error",
-            //                ex.Message
-            //            });
-            //        }
-            //    }
-
-            //    [HttpPost]
-            //    public async Task<IActionResult> SubmitFhirJson([FromBody] UploadRequest request)
-            //    {
-            //        try
-            //        {
-            //            if (request == null || request.PatientId <= 0)
-            //            {
-            //                return BadRequest(new { StatusCode = 400, Message = "Invalid PatientId." });
-            //            }
-
-            //            if (!FhirJsonCache.TryGetValue(request.PatientId, out var fhirJson))
-            //            {
-            //                return NotFound(new { StatusCode = 404, Message = "FHIR JSON not found in cache." });
-            //            }
-
-            //            using var client = new HttpClient { BaseAddress = new Uri("http://localhost:8080/fhir") };
-            //            var content = new StringContent(fhirJson, Encoding.UTF8, "application/fhir+json");
-
-            //            var response = await client.PostAsync("Patient", content);
-            //            var responseBody = await response.Content.ReadAsStringAsync();
-
-            //            if (response.IsSuccessStatusCode)
-            //            {
-            //                return Ok(new
-            //                {
-            //                    StatusCode = 200,
-            //                    Message = "FHIR JSON submitted successfully.",
-            //                    HapiResponse = responseBody
-            //                });
-            //            }
-            //            else
-            //            {
-            //                return StatusCode((int)response.StatusCode, new
-            //                {
-            //                    Status = "Error",
-            //                    Message = "Failed to submit FHIR JSON.",
-            //                    HapiError = responseBody
-            //                });
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            return StatusCode(500, new
-            //            {
-            //                StatusCode = 500,
-            //                Status = "Error",
-            //                ex.Message
-            //            });
-            //        }
-            //    }
-
-            //}
         }
     }
 }

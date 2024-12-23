@@ -70,6 +70,17 @@ builder.Services
         };
     });
 
+// CORS with default policy and middleware
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // 3.add Controllers, Views
 builder.Services.AddControllersWithViews();
 
@@ -87,6 +98,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
+// Cors 
+app.UseCors("AllowAllOrigins");
 
 // AuthENTication first and then AuthORization
 app.UseAuthentication();

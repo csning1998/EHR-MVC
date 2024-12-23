@@ -18,9 +18,9 @@ async function uploadToFhir(patientId) {
             return;
         }
 
-        console.log("FHIR JSON fetched:", result.fhirJson);
+        const formattedJson = JSON.stringify(JSON.parse(result.fhirJson), null, 4);
 
-        document.getElementById('fhirModalBody').textContent = result.fhirJson;
+        document.getElementById('fhirModalBody').textContent = formattedJson;
 
         window.fhirToken = result.token;
         console.log("window.fhirToken ", window.fhirToken )

@@ -172,13 +172,13 @@
         </div>
     </div>
     <div class="modal fade" id="fhirModal" tabindex="-1" aria-labelledby="fhirModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="fhirModalLabel">FHIR JSON</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body fhir-modal-body">
                     <pre id="fhirModalBody" style="white-space: pre-wrap; word-wrap: break-word;"></pre>
                 </div>
                 <div class="modal-footer">
@@ -199,19 +199,28 @@
         box-sizing: border-box;
     }
 
+    .fhir-modal-body {
+        max-height: 75vh;
+        overflow-y: auto;
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
     .modal-dialog {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
+        max-width: 90%;
+        margin: auto;
     }
 
     .modal-content {
-        margin: auto;
-        max-width: 80%;
         border-radius: 10px;
     }
 
+    .fhir-modal-body {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
     #patientList {
         width: 100%;
