@@ -33,7 +33,7 @@ namespace EHR_MVC.Repositories
 
                 command.Parameters.Add(outPutValue);
                 command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
-                command.Parameters.Add(new SqlParameter("@Active", patient.Active)); // 確保 Active 被傳遞
+                command.Parameters.Add(new SqlParameter("@Active", patient.Active));
                 command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
                 command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
                 command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));

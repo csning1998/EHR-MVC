@@ -71,7 +71,7 @@ namespace EHR_MVC.Controllers
             return View();
         }
 
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> Save([FromForm] PatientViewModel patientViewModel)
         {
@@ -121,7 +121,7 @@ namespace EHR_MVC.Controllers
             }
         }
 
-
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         public async Task<IActionResult> Query(long? patientId, string? idNo, string? familyName, string? givenName)
         {
@@ -153,6 +153,7 @@ namespace EHR_MVC.Controllers
             }
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> Delete([FromForm] long? PatientId)
         {
@@ -207,6 +208,7 @@ namespace EHR_MVC.Controllers
             public long PatientId { get; set; }
         }
 
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> GetFhirJson([FromBody] UploadRequest request)
         {
