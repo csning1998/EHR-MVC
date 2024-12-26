@@ -10,10 +10,9 @@ using System.Collections.Concurrent;
 
 namespace EHR_MVC.Controllers
 {
-
     public static class FhirJsonCache
     {
-        public static Dictionary<string, string> CachedFhirJson = [];
+        public static Dictionary<string, string> CachedFhirJson = new();
     }
 
     [ApiController]
@@ -28,6 +27,7 @@ namespace EHR_MVC.Controllers
             return new PatientViewModel
             {
                 IdNo = string.Empty,
+                Active = true,
                 FamilyName = string.Empty,
                 GivenName = string.Empty,
                 Telecom = string.Empty,
@@ -46,10 +46,11 @@ namespace EHR_MVC.Controllers
 
         private static List<SelectListItem> InitializeGenderCodeList()
         {
-            return [
+            return new List<SelectListItem>
+            {
                 new() { Text = "Male", Value = "M" },
                 new() { Text = "Female", Value = "F" }
-            ];
+            };
         }
 
 
@@ -70,7 +71,7 @@ namespace EHR_MVC.Controllers
             return View();
         }
 
-
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost]
         public async Task<IActionResult> Save([FromForm] PatientViewModel patientViewModel)
         {
@@ -92,6 +93,7 @@ namespace EHR_MVC.Controllers
 
                 if (patientDBModel.PatientId == 0)
                 {
+                    patientDBModel.Active = true;
                     dbResult = await _patientService.InsertPatientAsync(patientDBModel) > 0;
                 }
                 else
@@ -127,21 +129,16 @@ namespace EHR_MVC.Controllers
 
             try
             {
-                var resultList = new List<PatientViewModel>();
                 var dbResult = await _patientRepository.QueryPatientList(patientId, idNo, familyName, givenName);
 
-                if (dbResult.Any())
+                if (dbResult.Count != 0)
                 {
-                    resultList = dbResult.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
+                    var resultList = dbResult.Select(_patientService.ConvertPatientDBModel2ViewModel).ToList();
                     return Ok(resultList);
-                }
-                else if (dbResult.Count() == 0)
-                {
-                    return Ok("No data is found.");
                 }
                 else
                 {
-                    return Ok(new List<PatientViewModel>());
+                    return Ok("No data is found.");
                 }
 
             }
@@ -156,14 +153,58 @@ namespace EHR_MVC.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromForm] long? PatientId)
+        {
+            if (PatientId == null)
+            {
+                return BadRequest(new { StatusCode = 400, Message = "PatientId is required." });
+            }
+
+            try
+            {
+                var patientList = await _patientRepository.QueryPatientList(PatientId);
+
+                if (patientList == null || patientList.Count == 0)
+                {
+                    return NotFound(new { StatusCode = 404, Message = "Patient not found." });
+                }
+
+                var patient = patientList.First();
+
+                if (!patient.Active)
+                {
+                    return BadRequest(new { StatusCode = 400, Message = "Patient is already inactive." });
+                }
+
+                patient.Active = false;
+
+                var updateResult = await _patientRepository.UpdatePatientAsync(patient);
+
+                if (updateResult)
+                {
+                    return Ok(new { StatusCode = 200, Message = "Patient successfully deleted." });
+                }
+                else
+                {
+                    return StatusCode(500, new { StatusCode = 500, Message = "Failed to delete patient." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Status = "Error",
+                    Error = ex.Message,
+                    StatusCode = 500
+                });
+            }
+        }
+
+
         public class UploadRequest
         {
             public long PatientId { get; set; }
-        }
-
-        public static class FhirJsonCache
-        {
-            public static Dictionary<string, string> CachedFhirJson = new();
         }
 
         [HttpPost]

@@ -68,6 +68,24 @@ function setAjaxAuthorizationHeader() {
 }
 
 $(document).ready(function () {
-    checkToken(); 
+    checkToken();
     setAjaxAuthorizationHeader();
+
+    // Token-based navigation display
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+        // Hide login section and show logout section
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("logoutSection").style.display = "block";
+    } else {
+        // Show login section and hide logout section
+        document.getElementById("loginSection").style.display = "block";
+        document.getElementById("logoutSection").style.display = "none";
+    }
+
+    // Logout action
+    document.getElementById("logoutButton").addEventListener("click", function () {
+        localStorage.removeItem("jwtToken");
+        window.location.reload(); // Refresh page to update UI
+    });
 });

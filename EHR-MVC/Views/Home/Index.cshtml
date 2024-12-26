@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "FHIR Implementation in EHR";
 }
+@section Scripts {
+    <script src="~/js/Home/home.js"></script>
+ }
 
 <div class="container mt-5">
     <!-- Header Section -->
@@ -45,8 +48,11 @@
     <!-- Call-to-Action Section -->
     <div class="text-center mt-5">
         <p class="lead">Get started today and improve your EHR system.</p>
-        <a href="@Url.Action("Register", "User")" class="btn btn-primary btn-lg me-3">Register Now</a>
-        <a href="@Url.Action("Login", "User")" class="btn btn-outline-secondary btn-lg">Login</a>
+        <div id="userActions">
+            <!-- Placeholder for Login/Register or Welcome message -->
+            <a href="@Url.Action("Register", "User")" class="btn btn-primary btn-lg me-3">Register Now</a>
+            <a href="@Url.Action("Login", "User")" class="btn btn-outline-secondary btn-lg">Login</a>
+        </div>
     </div>
 </div>
 

@@ -32,8 +32,8 @@ namespace EHR_MVC.Models.Patient
         public DateTime Birthday { get; set; }
 
         [Required(ErrorMessage = "Address is required.")]
-        [DataType(DataType.Date, ErrorMessage = "Address should not left blank.")]
         public required string Address { get; set; }
+
         public string? Email { get; set; }
         public string? PostalCode { get; set; }
         public string? Country { get; set; }

@@ -85,8 +85,7 @@
                     <div class="editForm" id="editForm" >
                         <div class="row">
                             <div class="form-group col-md-2">
-                                <label class="control-label">Patient ID</label>
-                                <input type="text" class="form-control" id="PatientID" name="PatientID" value="@PatientViewModel.PatientId">
+                                <input type="hidden" id="PatientID" name="PatientID" value="@PatientViewModel.PatientId">
                             </div>
                             <div class="form-group col-md-5">
                                 <label class="control-label">Family (Last) Name</label>
@@ -167,7 +166,7 @@
                                 <button type="button" class="btn btn-secondary" id="editButton" onclick="enableEditing()">Edit</button>
                                 <button type="button" class="btn btn-primary d-none" id="saveButton" onclick="modifyPatientData()">Amend</button>
                                 <button type="button" class="btn btn-secondary d-none" id="cancelButton" onclick="cancelEditing()">Cancel</button>
-                                <button type="button" class="btn btn-danger" id="deleteButton" onclick="confirmDelete()">Delete</button>
+                                <button type="button" class="btn btn-danger" id="deleteButton" onclick="deletePatient()">Delete</button>
                             </div>
                         </div>
                     </div>

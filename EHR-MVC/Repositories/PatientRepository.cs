@@ -33,7 +33,7 @@ namespace EHR_MVC.Repositories
 
                 command.Parameters.Add(outPutValue);
                 command.Parameters.Add(new SqlParameter("@IdNo", patient.IdNo));
-                command.Parameters.Add(new SqlParameter("@Active", patient.Active));
+                command.Parameters.Add(new SqlParameter("@Active", patient.Active)); // 確保 Active 被傳遞
                 command.Parameters.Add(new SqlParameter("@FamilyName", patient.FamilyName));
                 command.Parameters.Add(new SqlParameter("@GivenName", patient.GivenName));
                 command.Parameters.Add(new SqlParameter("@Telecom", patient.Telecom));
@@ -47,7 +47,6 @@ namespace EHR_MVC.Repositories
                 command.Parameters.Add(new SqlParameter("@EmergencyContactName", patient.EmergencyContactName));
                 command.Parameters.Add(new SqlParameter("@EmergencyContactRelationship", patient.EmergencyContactRelationship));
                 command.Parameters.Add(new SqlParameter("@EmergencyContactPhone", patient.EmergencyContactPhone));
-
 
                 await connection.OpenAsync();
                 await command.ExecuteNonQueryAsync();
@@ -67,7 +66,7 @@ namespace EHR_MVC.Repositories
             using SqlConnection connection = new(_connectionString);
             var result = new List<PatientDBModel>();
 
-            var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE 1=1";
+            var queryStr = @"SELECT * FROM [EHR-MVC-DB].[dbo].[Patient] WHERE Active = @Active";
             var param = new List<SqlParameter>
             {
                 new("@Active", true)
@@ -75,25 +74,25 @@ namespace EHR_MVC.Repositories
 
             if (PatientId != null)
             {
-                queryStr += "and PatientId = @PatientId";
-                param.Add(new SqlParameter("@PatientId", @PatientId));
+                queryStr += " AND PatientId = @PatientId";
+                param.Add(new SqlParameter("@PatientId", PatientId));
                 Console.WriteLine($"Querying PatientId: {PatientId}"); // Debug
             }
             if (IdNo != null)
             {
-                queryStr += "and IdNo= @IdNo";
-                param.Add(new SqlParameter("@IdNo", @IdNo));
+                queryStr += " AND IdNo = @IdNo";
+                param.Add(new SqlParameter("@IdNo", IdNo));
                 Console.WriteLine($"Querying IdNo: {IdNo}"); // Debug
             }
             if (familyName != null)
             {
-                queryStr += "and familyName = like '%' + @familyName +'%'";
+                queryStr += " AND FamilyName LIKE '%' + @familyName +'%'";
                 param.Add(new SqlParameter("@familyName", familyName));
             }
             if (givenName != null)
             {
-                queryStr += "and givenName = like '%' + @givenName +'%'";
-                param.Add(new SqlParameter("@givenName", @givenName));
+                queryStr += " AND GivenName LIKE '%' + @givenName +'%'";
+                param.Add(new SqlParameter("@givenName", givenName));
             }
 
             SqlCommand command = new(queryStr, connection);
@@ -104,13 +103,12 @@ namespace EHR_MVC.Repositories
             }
 
             await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
 
-            SqlDataReader reader = command.ExecuteReader();
+            using SqlDataReader reader = await command.ExecuteReaderAsync();
 
             if (reader.HasRows)
             {
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     var patient = new PatientDBModel
                     {
@@ -153,23 +151,23 @@ namespace EHR_MVC.Repositories
             {
                 using SqlConnection connection = new(_connectionString);
                 var updateStr = @"UPDATE [EHR-MVC-DB].[dbo].[Patient]
-                          SET 
-                              IdNo = @IdNo, 
-                              Active = @Active, 
-                              FamilyName = @FamilyName, 
-                              GivenName = @GivenName, 
-                              Telecom = @Telecom, 
-                              Gender = @Gender, 
-                              Birthday = @Birthday, 
-                              Address = @Address,
-                              Email = @Email,
-                              PostalCode = @PostalCode,
-                              Country = @Country,
-                              PreferredLanguage = @PreferredLanguage,
-                              EmergencyContactName = @EmergencyContactName,
-                              EmergencyContactRelationship = @EmergencyContactRelationship,
-                              EmergencyContactPhone = @EmergencyContactPhone
-                          WHERE PatientId = @PatientId";
+                              SET 
+                                  IdNo = @IdNo, 
+                                  Active = @Active, 
+                                  FamilyName = @FamilyName, 
+                                  GivenName = @GivenName, 
+                                  Telecom = @Telecom, 
+                                  Gender = @Gender, 
+                                  Birthday = @Birthday, 
+                                  Address = @Address,
+                                  Email = @Email,
+                                  PostalCode = @PostalCode,
+                                  Country = @Country,
+                                  PreferredLanguage = @PreferredLanguage,
+                                  EmergencyContactName = @EmergencyContactName,
+                                  EmergencyContactRelationship = @EmergencyContactRelationship,
+                                  EmergencyContactPhone = @EmergencyContactPhone
+                              WHERE PatientId = @PatientId";
 
                 using SqlCommand command = new(updateStr, connection);
 

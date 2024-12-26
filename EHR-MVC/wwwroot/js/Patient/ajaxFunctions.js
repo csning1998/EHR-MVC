@@ -146,3 +146,41 @@ function modifyPatientData() {
         }
     });
 }
+
+function deletePatient() {
+    const patientId = document.getElementById("PatientID").value;
+
+    if (!patientId) {
+        alert("Patient ID is missing.");
+        return;
+    }
+
+    $.ajax({
+        url: '/Patient/Delete',
+        method: 'POST',
+        dataType: 'json',
+        data: { PatientId: patientId },
+        success: function (result, _textStatus, xhr) {
+            if (xhr.status === 200) {
+                alert(result.Message || "Patient successfully deleted.");
+                $('#patientModal').modal('hide');
+                queryPatientData();
+            } else if (xhr.status === 400) {
+                alert(result.Message || "Bad request. Unable to delete patient.");
+            } else {
+                alert("Unexpected success status: " + xhr.status);
+            }
+        },
+        error: function (xhr) {
+            if (xhr.status === 500) {
+                const errorResponse = xhr.responseJSON;
+                alert(errorResponse?.Message || "Server error occurred.");
+            } else if (xhr.status === 400) {
+                const errorResponse = xhr.responseJSON;
+                alert(errorResponse?.Message || "Bad request: Unable to delete patient.");
+            } else {
+                alert("Unexpected error: " + xhr.status + " - " + xhr.statusText);
+            }
+        }
+    });
+}

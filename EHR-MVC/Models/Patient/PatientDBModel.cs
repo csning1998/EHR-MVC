@@ -19,5 +19,4 @@ namespace EHR_MVC.Models.Patient
         public string EmergencyContactRelationship { get; set; }
         public string EmergencyContactPhone { get; set; }
     }
-
 }
